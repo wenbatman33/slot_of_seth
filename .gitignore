@@ -1,10 +1,10 @@
-# Cocos Creator 自動產生
-library/
-temp/
-local/
-build/
-profiles/
-native/
+# Cocos Creator 自動產生（只限專案根目錄；play/ 裡建置檔的 assets/resources/native/ 必須上傳）
+/library/
+/temp/
+/local/
+/build/
+/profiles/
+/native/
 
 # Python / Node 環境
 tools/.venv/
