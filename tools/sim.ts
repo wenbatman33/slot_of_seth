@@ -1,5 +1,5 @@
 // RTP 模擬：node --experimental-strip-types tools/sim.ts [轉數] ['{"base":{"scatter":3}}' 權重覆寫]
-import { SlotEngine, BUY_COST_X, winTier, WEIGHTS } from '../assets/scripts/core/SlotEngine.ts';
+import { SlotEngine, BUY_COST_X, winTier, WEIGHTS, JACKPOTS } from '../assets/scripts/core/SlotEngine.ts';
 
 const N = Number(process.argv[2] || 200000);
 if (process.argv[3]) {
@@ -23,7 +23,8 @@ function playFree(): number {
   return Math.min(total, 5000 * bet);
 }
 
-let wager = 0, baseRet = 0, scRet = 0, fg = 0, fgWin = 0, hits = 0, maxWin = 0;
+let wager = 0, baseRet = 0, scRet = 0, fg = 0, fgWin = 0, hits = 0, maxWin = 0, jpRet = 0;
+const pool = JACKPOTS.map(() => 0);
 const tiers = [0, 0, 0, 0];
 for (let i = 0; i < N; i++) {
   wager += bet;
@@ -32,6 +33,8 @@ for (let i = 0; i < N; i++) {
   baseRet += r.totalWin - r.scatterPay; scRet += r.scatterPay;
   if (w > 0) hits++;
   if (r.freeSpinsAwarded) { fg++; const f = playFree(); fgWin += f; w += f; }
+  JACKPOTS.forEach((j, k) => (pool[k] += j.grow));
+  if (r.jackpot >= 0) { const p = (JACKPOTS[r.jackpot].x + pool[r.jackpot]) * bet; jpRet += p; w += p; pool[r.jackpot] = 0; }
   maxWin = Math.max(maxWin, w);
   const t = winTier(w, bet); if (t >= 0) tiers[t]++;
 }
@@ -39,5 +42,5 @@ const aw0 = awaken;
 let buyRet = 0; const B = Math.max(1000, N / 100);
 for (let i = 0; i < B; i++) { const r = eng.spin('base', bet, 0, true); buyRet += r.totalWin + playFree(); }
 const pct = (v: number) => (v / wager * 100).toFixed(1) + '%';
-console.log(`RTP=${pct(baseRet + scRet + fgWin)} (base ${pct(baseRet)} scatter ${pct(scRet)} FG ${pct(fgWin)})  hit=${(hits / N * 100).toFixed(1)}%  FG 1/${(N / Math.max(1, fg)).toFixed(0)}  FGavg=${(fgWin / Math.max(1, fg)).toFixed(1)}x  awaken=${(aw0 / Math.max(1, fg) * 100).toFixed(0)}%  max=${maxWin.toFixed(0)}x`);
+console.log(`RTP=${pct(baseRet + scRet + fgWin + jpRet)} (base ${pct(baseRet)} scatter ${pct(scRet)} FG ${pct(fgWin)} JP ${pct(jpRet)} 理論 ${(JACKPOTS.reduce((a, j) => a + j.x / j.odds + j.grow, 0) * 100).toFixed(2)}%)  hit=${(hits / N * 100).toFixed(1)}%  FG 1/${(N / Math.max(1, fg)).toFixed(0)}  FGavg=${(fgWin / Math.max(1, fg)).toFixed(1)}x  awaken=${(aw0 / Math.max(1, fg) * 100).toFixed(0)}%  max=${maxWin.toFixed(0)}x`);
 console.log(`tiers big/super/mega/legend=${tiers.join('/')}  buyRTP=${(buyRet / (B * BUY_COST_X) * 100).toFixed(1)}%`);

@@ -97,6 +97,29 @@ def build(name, debug=False):
             mm &= allow
         label[mm] = idx[poly["bone"]]
     label[~A] = -1
+    # ---- 2b. 清掉各部件的小孤島：例如手臂輪廓外緣有幾個像素被分到身體，手臂一動就變成懸空碎片（QA P1-12）
+    part_of = {}
+    for pi, part in enumerate(rig["parts"]):
+        for bn in part["bones"]:
+            part_of[idx[bn]] = pi
+    plabel = np.full(label.shape, -1, np.int32)
+    for lid, pi in part_of.items():
+        plabel[label == lid] = pi
+    for pi in range(len(rig["parts"])):
+        m = plabel == pi
+        comps, n = ndimage.label(m)
+        if n <= 1:
+            continue
+        sizes = ndimage.sum(m, comps, range(1, n + 1))
+        small = [k + 1 for k, sz in enumerate(sizes) if sz < 0.03 * sizes.max()]
+        if not small:
+            continue
+        isl = np.isin(comps, small)
+        other = (plabel >= 0) & (plabel != pi)
+        _, (iy, ix) = ndimage.distance_transform_edt(~other, return_indices=True)
+        label[isl] = label[iy[isl], ix[isl]]
+        plabel[isl] = plabel[iy[isl], ix[isl]]
+        print(f"  · part {rig['parts'][pi]['name']}: 併掉 {len(small)} 個小孤島（{int(isl.sum())} px）")
 
     # ---- 3. 平滑權重圖（normalized convolution，1/2 解析度加速）
     ds = 2
@@ -141,6 +164,13 @@ def build(name, debug=False):
             dil = ndimage.binary_dilation(own, iterations=max(1, int(part.get("under_px", 30) * s)))
             mask |= dil & under_ok
         mask &= A
+        # 濾掉極小的零碎像素塊（去背殘留的髮絲、雜點），否則會跟著骨頭飄在空中
+        cc, ncc = ndimage.label(mask)
+        if ncc > 1:
+            sz = ndimage.sum(mask, cc, range(1, ncc + 1))
+            tiny = [k + 1 for k, v in enumerate(sz) if v < 150 * s * s]
+            if tiny:
+                mask &= ~np.isin(cc, tiny)
         fill = np.zeros_like(mask)
         if part.get("fill"):  # 被前方部件（手臂）遮住的區域：用最近的本部件顏色補畫，手臂移開時不會露洞
             fb = np.isin(label, [idx[n] for n in part["fill"]]) & A
@@ -150,6 +180,13 @@ def build(name, debug=False):
             fill = fb & closed & ~mask
         if part.get("fill_band"):  # 肩關節一圈：手臂像素離身體 px 以內的都用身體顏色補底，手臂轉動時不露縫
             fb2 = np.isin(label, [idx[n] for n in part["fill_band"]["bones"]]) & A
+            if part["fill_band"].get("radius"):  # 只補肩關節附近，不要沿整條手臂補（否則手臂一動就露出補在身上的碎片）
+                rr = part["fill_band"]["radius"] * s
+                near_sh = np.zeros_like(fb2)
+                for bn in part["fill_band"]["bones"]:
+                    hx, hy = bones[bn].ih
+                    near_sh |= (xx - hx) ** 2 + (yy - hy) ** 2 <= rr * rr
+                fb2 &= near_sh
             near = ndimage.binary_dilation(mask, iterations=max(1, int(part["fill_band"]["px"] * s)))
             fill = fill | (fb2 & near & ~mask)
             if not part.get("fill"):
@@ -226,7 +263,9 @@ def build(name, debug=False):
                 continue
             al = np.asarray(p["img"])[..., 3].astype(np.float32) / 255
             bl = ndimage.gaussian_filter(al, glow.get("blur", 7) * s)
-            a2 = np.clip(np.maximum(bl * 1.6, al * 0.75), 0, 1)
+            # 只留外圈光暈：模糊後扣掉本體，內部只剩一點點亮度（原本整片 75% 不透明，疊加後整個人褪成灰白）
+            # 外圈 = 模糊剪影減掉本體（內部 bl≈al≈1 時趨近 0），再補一點點內部亮度
+            a2 = np.clip(np.clip((bl - al * 0.98) * 2.4, 0, 1) + al * 0.08, 0, 1)
             g = np.zeros(al.shape + (4,), np.uint8)
             g[..., :3] = col
             g[..., 3] = (a2 * 255).astype(np.uint8)

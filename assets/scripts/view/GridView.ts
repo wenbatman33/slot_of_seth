@@ -31,6 +31,7 @@ export class SymbolView {
     set(cell: Cell, sun: boolean) {
         this.cell = cell;
         this.sun = sun;
+        this.art.color = Kit.color('#ffffff');
         Kit.stop(this.node);
         this.node.setScale(1, 1, 1);
         this.node.angle = 0;
@@ -79,6 +80,25 @@ export class SymbolView {
         } else if (this.text) {
             this.text.node.active = false;
         }
+    }
+
+    /**
+     * 倍數球「待揭曉」：球照常顯示（不留空洞），只先藏起倍數數字並稍微壓暗，
+     * 等角色施法打中再 reveal（QA P1-15，原作也是球先落下、被打中才顯示數字）
+     */
+    setPending(p: boolean) {
+        if (this.text) this.text.node.active = !p;
+        this.art.color = p ? Kit.color('#9a9aa8') : Kit.color('#ffffff');
+        Kit.opacity(this.glow.node).opacity = p ? 60 : 150;
+    }
+
+    reveal() {
+        this.setPending(false);
+        if (!this.text) return;
+        const n = this.text.node;
+        Tween.stopAllByTarget(n);
+        n.setScale(2.2, 2.2, 1);
+        tween(n).to(0.3, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
     }
 
     /** 中獎跳動 */
@@ -164,10 +184,14 @@ export class GridView {
         return new Vec3((c - (COLS - 1) / 2) * CELL_W, ((ROWS - 1) / 2 - r) * CELL_H, 0);
     }
 
+    /** 主控提供：這顆符號是不是「還沒被施法揭曉」的倍數球（落下途中就先藏數字） */
+    isPending: (cell: Cell) => boolean = () => false;
+
     private take(cell: Cell): SymbolView {
         const v = this.pool.pop() || new SymbolView(this.clip);
         v.node.active = true;
         v.set(cell, this.sun);
+        if (cell.id === 'orb' && this.isPending(cell)) v.setPending(true);
         return v;
     }
 

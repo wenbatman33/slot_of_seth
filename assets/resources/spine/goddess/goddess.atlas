@@ -21,8 +21,8 @@ body_glow
 arm_o
   rotate: false
   xy: 1001, 0
-  size: 331, 271
-  orig: 331, 271
+  size: 331, 270
+  orig: 331, 270
   offset: 0, 0
   index: -1
 arm_i

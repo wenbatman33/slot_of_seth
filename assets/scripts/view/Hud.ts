@@ -53,7 +53,6 @@ export class Hud {
     private multL!: Label;
     private fgNum!: Label;
     private jpL: Label[] = [];
-    private jpVals = [148021.38, 82751.77, 7702.37, 6588.97];
     private spinArrow!: Node;
     private spinRing!: Node;
     private autoL!: Label;
@@ -82,11 +81,6 @@ export class Hud {
         this.buildButtons(parent);
         // 每 3 秒輪播提示
         setInterval(() => this.nextTip(), 3200);
-        // Jackpot 數字緩慢累積
-        setInterval(() => {
-            this.jpVals = this.jpVals.map((v, i) => v + [0.37, 0.19, 0.05, 0.03][i] * Math.random());
-            this.jpL.forEach((l, i) => (l.string = Kit.fmt(this.jpVals[i])));
-        }, 350);
     }
 
     private reg(key: string, n: Node, ...labels: Label[]) {
@@ -107,7 +101,7 @@ export class Hud {
             t.horizontalAlign = Label.HorizontalAlign.LEFT;
             t.node.getComponent(UITransform)!.setAnchorPoint(0, 0.5);
             t.node.setPosition(-200, 0, 0);
-            const v = Kit.label(seg, Kit.fmt(this.jpVals[i]), 26, '#fff3cf', { outline: '#000000', outlineW: 2, name: 'val' });
+            const v = Kit.label(seg, '0.00', 26, '#fff3cf', { outline: '#000000', outlineW: 2, name: 'val' });
             v.node.getComponent(UITransform)!.setAnchorPoint(1, 0.5);
             v.node.setPosition(200, 0, 0);
             this.jpL.push(v);
@@ -122,11 +116,11 @@ export class Hud {
         // 牌匾寬度固定，字太長就自動縮小
         this.headerMsg.overflow = Label.Overflow.SHRINK;
         this.headerMsg.enableWrapText = false;
-        this.headerMsg.node.getComponent(UITransform)!.setContentSize(300, 56);
-        this.headerNum = Kit.bmLabel(n, Assets.fonts.num_gold, '', 50, 'num');
+        this.headerMsg.node.getComponent(UITransform)!.setContentSize(240, 48);
+        this.headerNum = Kit.bmLabel(n, Assets.fonts.num_gold, '', 42, 'num');
         this.headerNum.overflow = Label.Overflow.SHRINK;
         this.headerNum.enableWrapText = false;
-        this.headerNum.node.getComponent(UITransform)!.setContentSize(310, 64);
+        this.headerNum.node.getComponent(UITransform)!.setContentSize(250, 52);
         this.headerNum.node.active = false;
         this.reg('header', n, this.headerMsg);
     }
@@ -136,6 +130,9 @@ export class Hud {
         const ring = Kit.sprite(n, Assets.sf('ui_mult_ring'), 'ring', 150, 150);
         void ring;
         this.multL = Kit.bmLabel(n, Assets.fonts.num_white, '0x', 46, 'mult');
+        this.multL.overflow = Label.Overflow.SHRINK;
+        this.multL.enableWrapText = false;
+        this.multL.node.getComponent(UITransform)!.setContentSize(84, 56);
         n.active = false;
         this.reg('multRing', n, this.multL);
     }
@@ -173,9 +170,9 @@ export class Hud {
             const box = Kit.mk(key, n, 260, 64);
             box.setPosition(x, 0, 0);
             const v = Kit.label(box, '0.00', 32, '#fff6dc', { outline: '#000000', outlineW: 2, name: 'val' });
-            v.node.setPosition(0, 8, 0);
-            const c = Kit.label(box, cap, 18, '#b9a3d9', { bold: false, name: 'cap' });
-            c.node.setPosition(0, -20, 0);
+            v.node.setPosition(0, 11, 0);
+            const c = Kit.label(box, cap, 22, '#e2d4ff', { bold: false, name: 'cap' });
+            c.node.setPosition(0, -19, 0);
             return v;
         };
         this.balanceL = mk('balance', '點數', -260);
@@ -190,9 +187,9 @@ export class Hud {
         const bet = Kit.mk('betCtrl', parent, 330, 70);
         Kit.panel(bet, 330, 64, '#12081fd8', '#d8a94588', 32, 2, 'bg');
         this.betL = Kit.label(bet, '8.00', 32, '#ffffff', { name: 'val' });
-        this.betL.node.setPosition(0, 8, 0);
-        const cap = Kit.label(bet, '押注', 18, '#b9a3d9', { bold: false, name: 'cap' });
-        cap.node.setPosition(0, -20, 0);
+        this.betL.node.setPosition(0, 10, 0);
+        const cap = Kit.label(bet, '押注', 20, '#e2d4ff', { bold: false, name: 'cap' });
+        cap.node.setPosition(0, -17, 0);
         const minus = roundBtn(bet, 'minus', '−', 26);
         minus.setPosition(-135, 0, 0);
         const plus = roundBtn(bet, 'plus', '+', 26);
@@ -317,6 +314,8 @@ export class Hud {
     setBalance(v: number) { this.balanceL.string = Kit.fmt(v); }
     setWin(v: number) { this.winL.string = Kit.fmt(v); }
     setBet(v: number) { this.betL.string = Kit.fmt(v); }
+    /** Jackpot 條顯示的就是實際派彩金額（由主控依押注與累積獎池算好，QA P1-19） */
+    setJackpots(vals: number[]) { this.jpL.forEach((l, i) => (l.string = Kit.fmt(vals[i] || 0))); }
 
     setMode(mode: 'base' | 'free' | 'awaken') {
         if (this.tips !== (mode === 'base' ? HEADER_TIPS_BASE : mode === 'free' ? HEADER_TIPS_FREE : HEADER_TIPS_AWAKEN)) this.headerBusy = false;

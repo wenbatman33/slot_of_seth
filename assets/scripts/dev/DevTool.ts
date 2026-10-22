@@ -23,7 +23,7 @@ export interface DevHost {
 }
 
 // 版面預設值大改時遞增版本，讓瀏覽器裡的舊微調值失效
-export const DEV_STORE_KEY = 'seth2_layout_v2';
+export const DEV_STORE_KEY = 'seth2_layout_v3';
 
 const TRIGGERS: [string, string][] = [
     ['big', 'BIG WIN'], ['super', 'SUPER WIN'], ['mega', 'MEGA WIN'], ['legendary', 'LEGENDARY'],
@@ -90,6 +90,9 @@ export class DevTool {
         this.gear.textContent = '⚙';
         this.gear.title = 'DEV 微調工具（D）';
         this.gear.onclick = () => this.toggle();
+        // 正式畫面不顯示齒輪（QA P1-8）：網址加 ?dev=1 或在 Cocos 編輯器預覽（7456）時才出現；D 鍵一律可開
+        const q = new URLSearchParams(location.search);
+        if (!(q.has('dev') || location.port === '7456')) this.gear.style.display = 'none';
         document.body.appendChild(this.gear);
         this.highlight = document.createElement('div');
         this.highlight.id = 'devHL';
@@ -107,6 +110,7 @@ export class DevTool {
         this.root.style.display = this.open ? 'block' : 'none';
         this.gear.className = this.open ? 'open' : '';
         this.gear.textContent = this.open ? '✕' : '⚙';
+        if (this.open) this.gear.style.display = '';
         if (!this.open && document.activeElement instanceof HTMLElement) document.activeElement.blur();
         this.highlight.style.display = 'none';
         if (this.open) this.render();

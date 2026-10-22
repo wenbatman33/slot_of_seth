@@ -1,7 +1,8 @@
 import {
     Node, UITransform, Sprite, SpriteFrame, Label, Color, Vec3, Vec2, tween, Tween, UIOpacity,
-    BitmapFont, Graphics, gfx, UIRenderer, Font,
+    BitmapFont, gfx, UIRenderer, Font,
 } from 'cc';
+import { Assets } from '../view/Assets';
 
 /** 共用小工具：建立節點、補間 Promise、按鈕、顏色 */
 export class Kit {
@@ -165,20 +166,29 @@ export class Kit {
         n.on(Node.EventType.TOUCH_CANCEL, () => release(false));
     }
 
-    /** 畫圓角矩形面板 */
-    static panel(parent: Node, w: number, h: number, fill: string, stroke?: string, radius = 16, strokeW = 3, name = 'panel'): Graphics {
-        const n = Kit.mk(name, parent, w, h);
-        const g = n.addComponent(Graphics);
-        g.fillColor = Kit.color(fill);
-        g.roundRect(-w / 2, -h / 2, w, h, radius);
-        g.fill();
+    /**
+     * 實心矩形（遮罩、閃光用）。用 Sprite + 白色貼圖染色，才會吃 UIOpacity 做半透明與淡入淡出
+     * （Graphics 的頂點色不吃節點透明度，QA P0-3）
+     */
+    static rect(parent: Node, w: number, h: number, color: string, name = 'rect'): Sprite {
+        const sp = Kit.sprite(parent, Assets.sf('white'), name, w, h);
+        sp.color = Kit.color(color);
+        return sp;
+    }
+
+    /** 圓角面板：九宮格 Sprite（底色）＋九宮格外框，可整塊淡入淡出 */
+    static panel(parent: Node, w: number, h: number, fill: string, stroke?: string, radius = 16, strokeW = 3, name = 'panel'): Sprite {
+        void strokeW;
+        if (radius <= 0) return Kit.rect(parent, w, h, fill, name);
+        const sp = Kit.sprite(parent, Assets.sf('ui_round_fill'), name, w, h);
+        sp.type = Sprite.Type.SLICED;
+        sp.color = Kit.color(fill);
         if (stroke) {
-            g.lineWidth = strokeW;
-            g.strokeColor = Kit.color(stroke);
-            g.roundRect(-w / 2, -h / 2, w, h, radius);
-            g.stroke();
+            const st = Kit.sprite(sp.node, Assets.sf('ui_round_stroke'), 'stroke', w, h);
+            st.type = Sprite.Type.SLICED;
+            st.color = Kit.color(stroke);
         }
-        return g;
+        return sp;
     }
 
     static fmt(v: number): string {

@@ -70,6 +70,8 @@ export interface SpinResult {
   /** 本轉是否觸發覺醒 */
   awakenTriggered: boolean;
   capped: boolean;
+  /** 本轉中的 Jackpot（JACKPOTS 的索引），-1 = 沒中；只在主遊戲抽 */
+  jackpot: number;
 }
 
 export const ROWS = 5;
@@ -94,7 +96,20 @@ export const PAY_SYMS = Object.keys(PAYTABLE) as SymId[];
 export const SCATTER_PAY: Record<number, number> = { 4: 3, 5: 5, 6: 100 };
 export const FREE_SPINS_TRIGGER = 15;
 export const AWAKEN_EXTRA_SPINS = 5;
-export const BUY_COST_X = 110;
+/** 購買免費遊戲價格（× 押注）：免費遊戲平均約 122.7 倍，÷ 0.965 ≈ 127，讓購買版 RTP 也約 96% */
+export const BUY_COST_X = 127;
+
+/**
+ * Jackpot：固定倍數 + 累積獎池（累積部分以「押注倍數」記錄，換押注時金額一起換算）
+ * 每轉累積 grow 倍押注；派彩 = (x + 累積) × 押注，派完歸零
+ * 期望回饋 ≈ Σ x / odds + Σ grow ≈ 1.1% + 0.2%（已計入整體 RTP，tools/sim.ts 會一起模擬）
+ */
+export const JACKPOTS: { name: string; x: number; odds: number; grow: number }[] = [
+  { name: 'GRAND', x: 2000, odds: 1000000, grow: 0.0004 },
+  { name: 'MAJOR', x: 500, odds: 200000, grow: 0.0004 },
+  { name: 'MINOR', x: 50, odds: 20000, grow: 0.0006 },
+  { name: 'MINI', x: 20, odds: 5000, grow: 0.0006 },
+];
 
 /** 各模式符號權重（tools/sim.ts 模擬約 RTP 95%、免費遊戲約 1/390 轉） */
 export const WEIGHTS: Record<Mode, Record<string, number>> = {
@@ -279,9 +294,16 @@ export class SlotEngine {
     let totalWin = round2(win + scatterPay);
     let capped = false;
     if (totalWin > bet * MAX_WIN_X) { totalWin = bet * MAX_WIN_X; capped = true; }
+    // Jackpot：只在主遊戲（非購買）抽，最多中一個，由大到小判定
+    let jackpot = -1;
+    if (mode === 'base' && !buy) {
+      for (let i = 0; i < JACKPOTS.length; i++) {
+        if (this.rng.next() * JACKPOTS[i].odds < 1) { jackpot = i; break; }
+      }
+    }
     return {
       mode, initial, steps, final: board, baseWin, orbs, appliedMult, totalMult,
-      scatterPay, scatterCount, totalWin, freeSpinsAwarded, awakenTriggered, capped,
+      scatterPay, scatterCount, totalWin, freeSpinsAwarded, awakenTriggered, capped, jackpot,
     };
   }
 }

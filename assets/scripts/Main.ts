@@ -15,14 +15,14 @@ import {
     LAYOUT_PC, LAYOUT_MOBILE, LayoutMap, ElemLayout, DESIGN_PC, DESIGN_MOBILE, TIMING,
 } from './layout/Layouts';
 import {
-    SlotEngine, SpinResult, Mode, BUY_COST_X, PAYTABLE, winTier, round2, COLS, ROWS,
+    SlotEngine, SpinResult, Mode, BUY_COST_X, PAYTABLE, winTier, round2, COLS, ROWS, JACKPOTS, SCATTER_PAY, MAX_WIN_X,
 } from './core/SlotEngine';
 
 const { ccclass } = _decorator;
 
 const BETS = [0.4, 0.8, 1, 2, 4, 8, 10, 20, 40, 80, 100, 200];
-const JP_NAMES = ['GRAND', 'MAJOR', 'MINOR', 'MINI'];
-const JP_ODDS = [120000, 25000, 4000, 800];
+/** 手機橫拿（畫面矮）時 HUD 放大倍率，避免按鈕與說明字太小（QA P1-6） */
+const HUD_KEYS = ['jackpots', 'bottomBar', 'betCtrl', 'spinBtn', 'turboBtn', 'autoBtn', 'menuBtn', 'soundBtn'];
 
 /**
  * 主控：版面 / 流程 / 狀態
@@ -63,7 +63,8 @@ export class Main extends Component implements DevHost {
     private nextCaster = 0;
     private forceScatter = false;
     private forceOrb = false;
-    private jpVals = [148021.38, 82751.77, 7702.37, 6588.97];
+    /** Jackpot 累積獎池（以押注倍數記錄，見 SlotEngine.JACKPOTS） */
+    private jpPool = JACKPOTS.map(() => 0);
     private loadingLabel: Label | null = null;
     private ready = false;
 
@@ -117,8 +118,8 @@ export class Main extends Component implements DevHost {
         Kit.opacity(this.bgFire.node).opacity = 0;
         this.ambient = Kit.mk('ambient', R);
         // 角色（Spine 骨骼）
-        this.charL = new CharacterView(R, 'seth', 'charL', 0.68);
-        this.charR = new CharacterView(R, 'goddess', 'charR', 0.84);
+        this.charL = new CharacterView(R, 'seth', 'charL', 0.7);
+        this.charR = new CharacterView(R, 'goddess', 'charR', 0.62);
         for (const c of [this.charL, this.charR]) {
             const ut = c.node.getComponent(UITransform)!;
             ut.setAnchorPoint(0.5, 0);
@@ -126,6 +127,7 @@ export class Main extends Component implements DevHost {
         }
         // 盤面
         this.grid = new GridView(R);
+        this.grid.isPending = (c) => !this.revealed.has(c.uid);
         // Logo（文字標誌）
         this.logo = Kit.mk('logo', R, 420, 160);
         const lt = Kit.label(this.logo, '戰神賽特 II', 72, '#ffd66b', { outline: '#3a1300', outlineW: 7, name: 't' });
@@ -149,7 +151,7 @@ export class Main extends Component implements DevHost {
         this.cele = new Celebrations(R, () => this.vis);
 
         this.grid.setBoard(this.engine.spin('base', 1).final);
-        this.grid.views.forEach((col) => col.forEach((v) => this.revealed.add(v.cell.uid)));
+        this.grid.views.forEach((col) => col.forEach((v) => { this.revealed.add(v.cell.uid); if (v.cell.id === 'orb') v.setPending(false); }));
         this.refreshHud();
         this.hud.setMode('base');
         this.ready = true;
@@ -169,7 +171,7 @@ export class Main extends Component implements DevHost {
 
     // ================================================================ 解析度與版面
     private applyResolution() {
-        const fs = view.getFrameSize();
+        const fs = screen.windowSize;
         const auto = fs.height > fs.width;
         this.portrait = this.forcedLayout === 'auto' ? auto : this.forcedLayout === 'mobile';
         const D = this.portrait ? DESIGN_MOBILE : DESIGN_PC;
@@ -214,12 +216,15 @@ export class Main extends Component implements DevHost {
             this.bg.node.getComponent(UITransform)!.setContentSize(sf.originalSize.width * sc, sf.originalSize.height * sc);
             this.bgFire.node.getComponent(UITransform)!.setContentSize(sf.originalSize.width * sc, sf.originalSize.height * sc);
         }
+        const cssH = typeof window !== 'undefined' ? window.innerHeight : 1080;
+        const boost = !this.portrait && cssH < 520 ? 1.35 : 1;
         for (const key of Object.keys(lay)) {
             const n = this.elem(key);
             if (!n) continue;
             const e = lay[key];
-            n.setPosition(this.anchorPos(e));
-            const s = e.s;
+            const k = HUD_KEYS.indexOf(key) >= 0 ? boost : 1;
+            n.setPosition(this.anchorPos({ ...e, x: e.x * k, y: e.y * k }));
+            const s = e.s * k;
             n.setScale(s, s, 1);
             n.angle = e.r || 0;
             Kit.opacity(n).opacity = e.o ?? 255;
@@ -235,7 +240,7 @@ export class Main extends Component implements DevHost {
                 if (e.c && labels[0].useSystemFont) labels[0].color = Kit.color(e.c);
             }
         }
-        this.hud.relayoutWidth(this.vis.w, this.portrait);
+        this.hud.relayoutWidth(this.vis.w / boost, this.portrait);
         this.hud.setMode(this.mode);
         if (lay.multRing?.v === false) this.hud.nodes.multRing.active = false;
     }
@@ -295,7 +300,7 @@ export class Main extends Component implements DevHost {
             case 'purple': this.cele.wave('purple'); break;
             case 'castL': this.castTo(this.charL, []); break;
             case 'castR': this.castTo(this.charR, []); break;
-            case 'jackpot': this.cele.jackpot('MINOR', 7702.37); break;
+            case 'jackpot': this.cele.jackpot(JACKPOTS[2].name, this.jpAmount(2)); break;
             case 'force4': this.forceScatter = true; break;
             case 'forceOrb': this.forceOrb = true; break;
             case 'base': this.setMode('base'); break;
@@ -310,6 +315,7 @@ export class Main extends Component implements DevHost {
 
     private onSpinPressed() {
         Sfx.unlock();
+        if (this.cele.modal > 0) return;  // 確認窗、說明窗等開著時不旋轉（QA P0-2）
         if (this.auto) { this.auto = 0; this.hud.setAuto(0); return; }
         if (this.busy || this.mode !== 'base') return;
         this.playBaseSpin(false);
@@ -340,32 +346,60 @@ export class Main extends Component implements DevHost {
     private async buyFeature() {
         if (this.busy || this.mode !== 'base') return;
         Sfx.unlock();
+        // 確認窗開著期間鎖住流程，避免同時開始一般旋轉後購買被吃掉（QA P0-2）
+        this.busy = true;
         const cost = round2(this.bet * BUY_COST_X);
         const ok = await this.cele.confirm('購買免費遊戲', `花費 ${Kit.fmt(cost)}（${BUY_COST_X} 倍押注）\n直接獲得 15 次免費遊戲`, '購買');
+        this.busy = false;
         if (!ok) return;
         if (this.balance < cost) { this.toast('點數不足'); return; }
+        // 扣款後立刻開始（playBaseSpin 在第一個 await 前就會設 busy，不會被插隊）
         this.balance = round2(this.balance - cost);
         this.refreshHud();
         this.playBaseSpin(true);
     }
 
     private showInfo() {
+        if (this.cele.modal > 0) return;
         const p = (k: string) => PAYTABLE[k].map((v) => v + 'x').join(' / ');
+        const sc = SCATTER_PAY;
         this.cele.info([
-            '【玩法】6 軸 × 5 列，盤面任意位置出現 8 個以上相同符號即中獎。',
-            '中獎符號消除後，上方符號落下補位，可連續消除。',
-            '【倍數球】賽特與女祭司施法打入盤面的倍數球（2x~500x），',
-            '主遊戲：本轉有贏分時，所有倍數球加總後乘上贏分。',
-            '免費遊戲：倍數球累加到總倍數，之後每次有倍數球的贏分都乘上總倍數。',
-            '【免費遊戲】4 個以上 SCATTER 贏得 15 次免費遊戲。',
-            '【覺醒之力】免費遊戲中出現 3 個以上 SCATTER，賽特覺醒：+5 次，',
-            '之後出現法老百搭（WILD）與金色太陽倍數球。',
-            '【賠率】8-9 / 10-11 / 12+ 個（× 押注）',
-            `彎刀 ${p('khopesh')}　眼鏡蛇 ${p('cobra')}　弓 ${p('bow')}　荷魯斯之眼 ${p('eye')}`,
-            `紅寶石 ${p('ruby')}　紫晶 ${p('amethyst')}　黃玉 ${p('topaz')}`,
-            `祖母綠 ${p('emerald')}　藍寶石 ${p('sapphire')}`,
-            'SCATTER 4 / 5 / 6 個：3x / 5x / 100x　最高贏分 5000 倍',
-            '【操作】空白鍵旋轉；D 鍵開啟 DEV 版面微調工具。',
+            [
+                '【玩法】',
+                '6 軸 × 5 列，任意位置出現',
+                '8 個以上相同符號即中獎。',
+                '中獎符號消除後上方落下補位，',
+                '可連續消除。',
+                '',
+                '【倍數球】',
+                '賽特與女祭司施法打入盤面，',
+                '主遊戲：倍數加總後乘上贏分。',
+                '免費遊戲：倍數累加成總倍數。',
+            ],
+            [
+                '【免費遊戲】',
+                '4 個以上 SCATTER 贏得 15 次。',
+                '',
+                '【覺醒之力】',
+                '免費遊戲中 3 個以上 SCATTER，',
+                '賽特覺醒，再加 5 次，',
+                '並出現法老百搭與太陽倍數球。',
+                '',
+                `最高贏分 ${MAX_WIN_X} 倍押注。`,
+            ],
+            [
+                '【賠率】8-9 / 10-11 / 12+ 個',
+                `彎刀　　 ${p('khopesh')}`,
+                `眼鏡蛇　 ${p('cobra')}`,
+                `弓　　　 ${p('bow')}`,
+                `荷魯斯眼 ${p('eye')}`,
+                `紅寶石　 ${p('ruby')}`,
+                `紫晶　　 ${p('amethyst')}`,
+                `黃玉　　 ${p('topaz')}`,
+                `祖母綠　 ${p('emerald')}`,
+                `藍寶石　 ${p('sapphire')}`,
+                `SCATTER 4/5/6 個：${sc[4]}x / ${sc[5]}x / ${sc[6]}x`,
+            ],
         ]);
     }
 
@@ -378,7 +412,11 @@ export class Main extends Component implements DevHost {
     private refreshHud() {
         this.hud.setBalance(this.balance);
         this.hud.setBet(this.bet);
+        this.hud.setJackpots(JACKPOTS.map((_, i) => this.jpAmount(i)));
     }
+
+    /** Jackpot 實際派彩金額：(固定倍數 + 累積) × 目前押注，條上顯示的就是這個數 */
+    private jpAmount(i: number) { return round2((JACKPOTS[i].x + this.jpPool[i]) * this.bet); }
 
     private setMode(m: Mode) {
         this.mode = m;
@@ -403,9 +441,9 @@ export class Main extends Component implements DevHost {
         this.hud.setWin(0);
         this.refreshHud();
         const res = this.engine.spin('base', this.bet, 0, buy || this.consumeForceScatter());
+        if (!buy) { JACKPOTS.forEach((j, i) => (this.jpPool[i] += j.grow)); this.refreshHud(); }
         const win = await this.runSpin(res);
-        // Jackpot（展示用小機率）
-        await this.maybeJackpot();
+        if (res.jackpot >= 0) await this.payJackpot(res.jackpot);
         if (res.freeSpinsAwarded) {
             this.balance = round2(this.balance + win);
             this.refreshHud();
@@ -454,7 +492,7 @@ export class Main extends Component implements DevHost {
         for (const step of res.steps) {
             acc = round2(acc + step.stepWin);
             this.hud.headerWin(Kit.fmt(acc));
-            this.hud.setWin(acc);
+            this.hud.setWin(this.mode === 'base' ? acc : round2(this.fgTotal + acc));
             Sfx.play('win');
             await this.grid.showWins(step, (w) => Kit.fmt(w.amount));
             Sfx.play('explode');
@@ -486,10 +524,10 @@ export class Main extends Component implements DevHost {
         res.initial[c][r] = { id: 'orb', mult: 10, uid: 900000 + Math.floor(Math.random() * 99999) };
     }
 
-    /** 新出現的倍數球先隱藏，等角色施法打中才現身 */
+    /** 新出現的倍數球先藏起數字，等角色施法打中才揭曉 */
     private hideNewOrbs() {
         for (const { v } of this.grid.find('orb')) {
-            if (!this.revealed.has(v.cell.uid)) Kit.opacity(v.node).opacity = 0;
+            if (!this.revealed.has(v.cell.uid)) v.setPending(true);
         }
     }
 
@@ -536,12 +574,10 @@ export class Main extends Component implements DevHost {
                 ball.node.destroy();
                 fx?.burst(to.x, to.y, this.fxTop, blue ? '#9fd8ff' : '#ffb0ff');
                 Sfx.play('impact');
-                // 倍數球現身
-                const op = Kit.opacity(v.node);
-                op.opacity = 255;
-                v.node.setScale(0.2, 0.2, 1);
-                tween(v.node).to(0.3, { scale: new Vec3(1.15, 1.15, 1) }, { easing: 'backOut' })
-                    .to(0.15, { scale: new Vec3(1, 1, 1) }).start();
+                // 倍數揭曉：球彈一下、數字從大縮回
+                v.reveal();
+                tween(v.node).to(0.12, { scale: new Vec3(1.2, 1.2, 1) }, { easing: 'quadOut' })
+                    .to(0.2, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
                 Sfx.play('orb');
                 resolve();
             }).start();
@@ -670,16 +706,12 @@ export class Main extends Component implements DevHost {
     }
 
     // ================================================================ Jackpot / 環境
-    private async maybeJackpot() {
-        for (let i = 0; i < 4; i++) {
-            if (Math.random() * JP_ODDS[i] < 1) {
-                const amt = round2(this.jpVals[i] * (this.bet / 8));
-                await this.cele.jackpot(JP_NAMES[i], amt);
-                this.balance = round2(this.balance + amt);
-                this.refreshHud();
-                return;
-            }
-        }
+    private async payJackpot(i: number) {
+        const amt = this.jpAmount(i);
+        await this.cele.jackpot(JACKPOTS[i].name, amt);
+        this.balance = round2(this.balance + amt);
+        this.jpPool[i] = 0;
+        this.refreshHud();
     }
 
     private spawnAmbient() {

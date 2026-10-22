@@ -45,7 +45,7 @@ RIG = {
     "parts": [
         {"name": "body", "order": 1, "bones": ["hip", "belly", "chest", "neck", "head", "nemes_l", "nemes_r"],
          "fill": ["uparm_l", "uparm_r"], "fill_px": 40,
-         "fill_band": {"bones": ["uparm_l", "uparm_r"], "px": 45}},
+         "fill_band": {"bones": ["uparm_l", "uparm_r"], "px": 45, "radius": 120}},
         {"name": "arm_l", "order": 2, "bones": ["uparm_l", "forearm_l", "fist_l"], "grow": ["chest"], "grow_px": 18},
         {"name": "arm_r", "order": 3, "bones": ["uparm_r", "forearm_r", "fist_r"], "grow": ["chest"], "grow_px": 18},
     ],
@@ -56,11 +56,11 @@ RIG = {
          "size": 110, "at": [706, 300], "blend": "additive", "order": 20},
         {"slot": "eye_r", "region": "glow_blue", "bone": "head", "image": "art_src/fx/glow_blue.png",
          "size": 110, "at": [784, 300], "blend": "additive", "order": 21},
-        {"slot": "bolt_l", "region": "bolt", "bone": "forearm_l", "image": "art_src/keyed/fx_lightning.png",
+        {"slot": "bolt_l", "region": "bolt", "bone": "forearm_l", "image": "art_src/fx/fx_lightning_soft.png",
          "size": 520, "at": [190, 380], "blend": "additive", "order": 22, "rotation": -20},
-        {"slot": "bolt_r", "region": "bolt", "bone": "forearm_r", "image": "art_src/keyed/fx_lightning.png",
+        {"slot": "bolt_r", "region": "bolt", "bone": "forearm_r", "image": "art_src/fx/fx_lightning_soft.png",
          "size": 520, "at": [1283, 380], "blend": "additive", "order": 23, "rotation": 110},
-        {"slot": "bolt_c", "region": "bolt", "bone": "head", "image": "art_src/keyed/fx_lightning.png",
+        {"slot": "bolt_c", "region": "bolt", "bone": "head", "image": "art_src/fx/fx_lightning_soft.png",
          "size": 640, "at": [736, 160], "blend": "additive", "order": 24, "rotation": 45},
     ],
     "anims": {

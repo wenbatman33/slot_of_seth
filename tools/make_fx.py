@@ -81,3 +81,24 @@ def star(n, rgb):
 win_frame(168, 146, (70, 240, 255)).save(G / "win_frame.png")
 star(128, (255, 250, 220)).save(G / "star.png")
 print("win_frame/star ok")
+
+
+def round_rect(n, r, border=0):
+    """白色圓角矩形（給九宮格面板用）：border>0 時只畫外框線"""
+    from PIL import ImageDraw
+    s = 4  # 超取樣抗鋸齒
+    m = Image.new("L", (n * s, n * s), 0)
+    d = ImageDraw.Draw(m)
+    d.rounded_rectangle([0, 0, n * s - 1, n * s - 1], r * s, fill=255)
+    if border:
+        d.rounded_rectangle([border * s, border * s, n * s - 1 - border * s, n * s - 1 - border * s], (r - border) * s, fill=0)
+    m = m.resize((n, n), Image.LANCZOS)
+    img = Image.new("RGBA", (n, n), (255, 255, 255, 0))
+    img.putalpha(m)
+    return img
+
+
+Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(G / "white.png")
+round_rect(96, 24).save(G / "ui_round_fill.png")
+round_rect(96, 24, 4).save(G / "ui_round_stroke.png")
+print("white/round ok")

@@ -32,6 +32,8 @@ export class Assets {
                     // 線性過濾、避免縮小時鋸齒
                     const tex = f.texture as Texture2D;
                     if (tex && tex.setFilters) tex.setFilters(Texture2D.Filter.LINEAR, Texture2D.Filter.LINEAR);
+                    // 圓角面板貼圖設九宮格邊界（96px 圖、圓角 24）
+                    if (name.indexOf('ui_round') === 0) f.insetLeft = f.insetRight = f.insetTop = f.insetBottom = 30;
                     Assets.frames[name] = f;
                 });
                 console.log(`[Assets] ${path}: ${Object.keys(Assets.frames).length} frames`);
