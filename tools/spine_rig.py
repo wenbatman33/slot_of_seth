@@ -347,7 +347,8 @@ def build(name, debug=False):
             skin[pn] = {pn: {"type": "mesh", "uvs": it["uvs"], "triangles": it["tris"],
                              "vertices": it["vdata"], "hull": it["nv"], "width": it["w"], "height": it["h"]}}
         elif kind == "g":
-            slots.append({"name": it["name"], "bone": "root", "attachment": it["name"], "color": "ffffff00", "blend": "additive"})
+            # 不用加色混合：iPhone Safari（WebKit）上角色骨架含 additive 插槽時，本體會被畫成半透明
+            slots.append({"name": it["name"], "bone": "root", "attachment": it["name"], "color": "ffffff00"})
             # 直接複製父部件網格（同 UV / 權重），貼圖改指向半解析度的發光剪影
             par = skin[it["parent"]][it["parent"]]
             skin[it["name"]] = {it["name"]: dict(par, path=it["name"])}
@@ -357,8 +358,7 @@ def build(name, debug=False):
             cx, cy = fx["at"][0] * s - root[0], root[1] - fx["at"][1] * s
             lx, ly = b.to_local(cx, cy)
             sl = {"name": fx["slot"], "bone": fx["bone"], "attachment": None if fx.get("hidden") else fx["region"]}
-            if fx.get("blend"):
-                sl["blend"] = fx["blend"]
+            # 特效插槽同樣一律用一般混合（見上方 glow 說明），rig 裡的 blend 設定不再輸出
             if fx.get("color"):
                 sl["color"] = fx["color"]
             slots.append(sl)
@@ -431,21 +431,13 @@ def build_anims(spec, bones, slot_names):
                 elif tr.get("type") == "attach":
                     ent["attachment"] = [{"time": t, "name": nm} for t, nm in tr["keys"]]
                 else:
-                    ent["color"] = [dict({"time": t, "color": c}, **CURVE) for t, c in tr["keys"]]
+                    ent["color"] = ease_color_keys(tr["keys"])
                 continue
             ch = tr["ch"]
             ent = bt.setdefault(tr["bone"], {})
             keys = []
             if "keys" in tr:
-                for t, v in tr["keys"]:
-                    k = {"time": t}
-                    if ch == "rotate":
-                        k["angle"] = v
-                    else:
-                        k["x"], k["y"] = v
-                    if tr.get("ease", True):
-                        k.update(CURVE)
-                    keys.append(k)
+                keys = ease_keys(tr["keys"], ch, tr.get("ease", True))
             else:  # osc：在每個半週期極值放關鍵格 + ease 曲線 ≈ 正弦
                 P, ph = tr["period"], tr.get("phase", 0.0)
                 n = max(1, round(D / P))
@@ -470,6 +462,51 @@ def build_anims(spec, bones, slot_names):
             out[an]["bones"] = bt
         if st:
             out[an]["slots"] = st
+    return out
+
+
+# 緩動改成「密集線性取樣」而不是寫 curve 欄位：Cocos 的 Spine 執行庫讀 curve 時會把顏色插值成接近 0，
+# 角色施法時變得又暗又半透明。每秒 30 格的線性關鍵格在所有執行庫上結果都一樣。
+EASE_FPS = 30
+
+
+def _ease(u):
+    return u * u * (3 - 2 * u)  # smoothstep，接近原本的 ease-in-out
+
+
+def _segments(keys):
+    for (t0, v0), (t1, v1) in zip(keys, keys[1:]):
+        n = max(1, int(round((t1 - t0) * EASE_FPS)))
+        for i in range(n):
+            yield t0 + (t1 - t0) * i / n, v0, v1, _ease(i / n)
+
+
+def ease_keys(keys, ch, ease=True):
+    out = []
+    if not ease or len(keys) < 2:
+        seq = [(t, v, v, 0) for t, v in keys]
+    else:
+        seq = list(_segments(keys)) + [(keys[-1][0], keys[-1][1], keys[-1][1], 0)]
+    for t, v0, v1, u in seq:
+        k = {"time": round(t, 4)}
+        if ch == "rotate":
+            k["angle"] = round(v0 + (v1 - v0) * u, 3)
+        else:
+            k["x"] = round(v0[0] + (v1[0] - v0[0]) * u, 4)
+            k["y"] = round(v0[1] + (v1[1] - v0[1]) * u, 4)
+        out.append(k)
+    return out
+
+
+def ease_color_keys(keys):
+    def rgba(h):
+        return [int(h[i:i + 2], 16) for i in (0, 2, 4, 6)]
+    out = []
+    seq = list(_segments(keys)) + [(keys[-1][0], keys[-1][1], keys[-1][1], 0)]
+    for t, c0, c1, u in seq:
+        a, b = rgba(c0), rgba(c1)
+        c = "".join(f"{round(x + (y - x) * u):02x}" for x, y in zip(a, b))
+        out.append({"time": round(t, 4), "color": c})
     return out
 
 

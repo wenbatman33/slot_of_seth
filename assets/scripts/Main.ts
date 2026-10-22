@@ -183,8 +183,12 @@ export class Main extends Component implements DevHost {
         this.vis = { w: vs.width, h: vs.height };
     }
 
+    /** 盤面中心 y（applyLayout 先算好，'RC' 錨點用） */
+    private reelY = 0;
+
     private anchorPos(e: ElemLayout): Vec3 {
         if (e.a === 'P') return new Vec3(e.x, e.y, 0);  // 子元件：相對父元件
+        if (e.a === 'RC') return new Vec3(e.x, this.reelY + e.y, 0);  // y 相對盤面中心
         const W = this.vis.w / 2, H = this.vis.h / 2;
         let x = 0, y = 0;
         if (e.a.indexOf('L') >= 0) x = -W;
@@ -220,13 +224,23 @@ export class Main extends Component implements DevHost {
         }
         const cssH = typeof window !== 'undefined' ? window.innerHeight : 1080;
         const boost = !this.portrait && cssH < 520 ? 1.35 : 1;
+        // 先算盤面位置，'RC' 錨點的元件（牌匾、倍數框、角色）跟著盤面
+        if (lay.reel) this.reelY = this.anchorPos(lay.reel).y;
+        // 手機直式：角色站在盤面後方，頭頂不能超過 Jackpot 條（依實際可用高度等比縮小兩人）
+        let charK = 1;
+        if (this.portrait && lay.charL?.a === 'RC') {
+            const topLimit = this.vis.h / 2 - 125;
+            const feet = this.reelY + lay.charL.y;
+            const need = 1152 * Math.max(lay.charL.s, lay.charR?.s || 0);
+            charK = Math.min(1, Math.max(0.55, (topLimit - feet) / need));
+        }
         for (const key of Object.keys(lay)) {
             const n = this.elem(key);
             if (!n) continue;
             const e = lay[key];
             const k = HUD_KEYS.indexOf(key) >= 0 ? boost : 1;
             n.setPosition(this.anchorPos({ ...e, x: e.x * k, y: e.y * k }));
-            const s = e.s * k;
+            const s = e.s * k * (key === 'charL' || key === 'charR' ? charK : 1);
             n.setScale(s, s, 1);
             (n as any).__ls = s;  // 數字彈跳動畫結束時回到這個縮放
             n.angle = e.r || 0;

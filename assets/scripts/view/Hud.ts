@@ -292,7 +292,7 @@ export class Hud {
                 }
             });
         }
-        this.layoutBottom(w);
+        this.layoutBottom(w, portrait);
     }
 
     private segWidth(seg: Node, w: number) {
@@ -307,7 +307,7 @@ export class Hud {
         val.setPosition(-26, 0, 0);
     }
 
-    private layoutBottom(w: number) {
+    private layoutBottom(w: number, portrait = false) {
         const n = this.nodes.bottomBar;
         if (!n) return;
         const bg = this.bottomBg;
@@ -322,7 +322,8 @@ export class Hud {
         n.getComponent(UITransform)!.setContentSize(w, 80);
         const av = n.getChildByName('avatar');
         const nm = n.getChildByName('name');
-        const narrow = w < 1300;
+        // 手機直式一律精簡：不顯示玩家名稱，點數靠左、贏分靠右，中間留給押注
+        const narrow = portrait || w < 1300;
         if (av) av.setPosition(-w / 2 + 50, 0, 0);
         if (nm) { nm.setPosition(-w / 2 + 90, 0, 0); nm.active = !narrow; }
         n.getChildByName('balance')!.setPosition(narrow ? -w / 2 + 230 : -260, 0, 0);

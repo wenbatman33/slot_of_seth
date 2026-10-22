@@ -3,11 +3,12 @@
  *
  * 座標系：設計解析度單位，原點 = 錨點（a）所在位置，x 向右、y 向上
  *   a: 'C' 畫面中心、'L' 左緣中點、'R' 右緣中點、'T' 上緣中點、'B' 下緣中點、
- *      'TL' 'TR' 'BL' 'BR' 四角、'P' 相對父元件（子元件用，例如牌匾裡的數字）
+ *      'TL' 'TR' 'BL' 'BR' 四角、'P' 相對父元件（子元件用，例如牌匾裡的數字）、
+ *      'RC' x 相對畫面中心、y 相對盤面中心（手機直式用：盤面依螢幕高度移動時，牌匾、角色跟著走）
  *   s: 縮放、r: 旋轉（度）、o: 透明度 0~255、v: 是否顯示
  *   fs: 字級、c: 文字顏色（#rrggbb），只對有文字的元件有效
  */
-export type Anchor = 'C' | 'L' | 'R' | 'T' | 'B' | 'TL' | 'TR' | 'BL' | 'BR' | 'P';
+export type Anchor = 'C' | 'L' | 'R' | 'T' | 'B' | 'TL' | 'TR' | 'BL' | 'BR' | 'P' | 'RC';
 
 export interface ElemLayout {
     a: Anchor;
@@ -58,23 +59,28 @@ export const LAYOUT_PC: LayoutMap = {
     fgNum: { a: 'P', x: 0, y: 85, s: 1 },
 };
 
+/**
+ * 手機直式：由下往上排
+ *   底列（點數／押注／贏分同一列）→ 旋轉鈕一列 → 盤面緊貼在旋轉列上方 → 角色站在盤面後方
+ *   角色縮放會依實際可用高度自動縮小（Main.applyLayout），頭不會超出 Jackpot 條
+ */
 export const LAYOUT_MOBILE: LayoutMap = {
     bg: { a: 'C', x: 0, y: 0, s: 1 },
-    charL: { a: 'C', x: -290, y: 225, s: 0.66 },
-    charR: { a: 'C', x: 295, y: 215, s: 0.63 },
-    reel: { a: 'C', x: 0, y: -140, s: 0.82 },
-    header: { a: 'C', x: 0, y: 232, s: 1, fs: 34, c: '#fff1c4' },
-    multRing: { a: 'C', x: 468, y: 228, s: 0.9, fs: 46, c: '#fff4d0' },
-    fgCounter: { a: 'C', x: -330, y: -610, s: 0.6, fs: 110, c: '#ffd85a' },
+    reel: { a: 'B', x: 0, y: 690, s: 0.82 },
+    charL: { a: 'RC', x: -290, y: 210, s: 0.7 },
+    charR: { a: 'RC', x: 295, y: 210, s: 0.67 },
+    header: { a: 'RC', x: 0, y: 372, s: 1, fs: 34, c: '#fff1c4' },
+    multRing: { a: 'RC', x: 468, y: 368, s: 0.9, fs: 46, c: '#fff4d0' },
+    fgCounter: { a: 'RC', x: -395, y: 560, s: 0.5, fs: 110, c: '#ffd85a' },
     logo: { a: 'T', x: 0, y: -175, s: 0.8 },
     jackpots: { a: 'T', x: 0, y: -40, s: 1, fs: 24 },
-    bottomBar: { a: 'B', x: 0, y: 46, s: 1, fs: 30 },
-    betCtrl: { a: 'B', x: 0, y: 145, s: 1, fs: 34 },
-    spinBtn: { a: 'B', x: 0, y: 330, s: 1.05 },
-    turboBtn: { a: 'B', x: -250, y: 330, s: 1 },
-    autoBtn: { a: 'B', x: 250, y: 330, s: 1 },
-    menuBtn: { a: 'B', x: 430, y: 330, s: 1 },
-    soundBtn: { a: 'B', x: -430, y: 330, s: 1 },
+    bottomBar: { a: 'B', x: 0, y: 42, s: 1, fs: 30 },
+    betCtrl: { a: 'B', x: 0, y: 42, s: 0.82, fs: 34 },
+    spinBtn: { a: 'B', x: 0, y: 192, s: 0.88 },
+    turboBtn: { a: 'B', x: -235, y: 192, s: 0.82 },
+    autoBtn: { a: 'B', x: 235, y: 192, s: 0.82 },
+    menuBtn: { a: 'B', x: 420, y: 192, s: 0.82 },
+    soundBtn: { a: 'B', x: -420, y: 192, s: 0.82 },
     buyBtn: { a: 'C', x: -380, y: -560, s: 0.9, fs: 28 },
     // 子元件（相對父元件）
     headerMsg: { a: 'P', x: 0, y: 0, s: 1 },

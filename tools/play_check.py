@@ -13,7 +13,9 @@ from browser_lock import browser_lock
 ROOT = Path(__file__).resolve().parent.parent
 url, mode, prefix = sys.argv[1], sys.argv[2], sys.argv[3]
 acts = sys.argv[4:]
-vp = {"pc": dict(width=1600, height=900), "mobile": dict(width=390, height=844), "landphone": dict(width=844, height=390)}[mode]
+# iphone：iPhone Safari 扣掉網址列與工具列後的實際可視區（使用者回報的尺寸）
+vp = {"pc": dict(width=1600, height=900), "mobile": dict(width=390, height=844), "landphone": dict(width=844, height=390),
+      "iphone": dict(width=430, height=764), "iphonese": dict(width=375, height=553), "android": dict(width=412, height=780)}[mode]
 out = ROOT / "art_src/playtest"
 out.mkdir(parents=True, exist_ok=True)
 logs = []

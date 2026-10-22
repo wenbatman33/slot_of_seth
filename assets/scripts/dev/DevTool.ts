@@ -24,7 +24,7 @@ export interface DevHost {
 }
 
 // 版面預設值大改時遞增版本，讓瀏覽器裡的舊微調值失效
-export const DEV_STORE_KEY = 'seth2_layout_v4';
+export const DEV_STORE_KEY = 'seth2_layout_v5';
 
 const TRIGGERS: [string, string][] = [
     ['big', 'BIG WIN'], ['super', 'SUPER WIN'], ['mega', 'MEGA WIN'], ['legendary', 'LEGENDARY'],
@@ -181,7 +181,7 @@ export class DevTool {
         const e = this.cur()[this.sel];
         if (e) {
             const anc = document.createElement('select');
-            (['C', 'L', 'R', 'T', 'B', 'TL', 'TR', 'BL', 'BR', 'P'] as Anchor[]).forEach((a) => {
+            (['C', 'L', 'R', 'T', 'B', 'TL', 'TR', 'BL', 'BR', 'P', 'RC'] as Anchor[]).forEach((a) => {
                 const o = document.createElement('option');
                 o.value = a; o.textContent = '錨點 ' + a;
                 if (a === e.a) o.selected = true;
