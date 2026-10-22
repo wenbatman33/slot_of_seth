@@ -89,7 +89,11 @@
   </style>
 </head>
 <body>
-  <div id="seth2Ver">v1022-1941 8bd5315</div>
+  <div id="seth2Ver">v1022-2158 84cb0b1*</div>
+  <script>
+    // 版本號只在網址加 ?dev=1 或 ?v 時顯示，正式畫面不壓到底列文字
+    (function () { var q = location.search; if (!/[?&](dev|v)(=|&|$)/.test(q)) document.getElementById('seth2Ver').style.display = 'none'; })();
+  </script>
   <div id="seth2Loading">
     <div class="sl-emblem"><div class="rays"></div><div class="glow"></div><img src="loading/scarab.png" alt=""></div>
     <div class="sl-title">戰神賽特 II</div>
@@ -148,7 +152,7 @@
 <script src="src/import-map.92567.json" type="systemjs-importmap" charset="utf-8"> </script>
 
 <script>
-    System.import('./index.e42ea.js').catch(function(err) { console.error(err); })
+    System.import('./index.84ef8.js').catch(function(err) { console.error(err); })
 </script>
 
 </body>

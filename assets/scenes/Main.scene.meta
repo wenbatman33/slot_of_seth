@@ -1,10 +1,10 @@
 {
-  "ver": "1.1.50",
-  "importer": "scene",
+  "ver": "0.0.1",
+  "importer": "*",
   "imported": true,
   "uuid": "d5d3fa56-65b6-42a6-809d-b9217dc48186",
   "files": [
-    ".json"
+    ".scene"
   ],
   "subMetas": {},
   "userData": {}
