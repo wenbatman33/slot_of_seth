@@ -1,0 +1,26 @@
+# Cocos Creator 自動產生
+library/
+temp/
+local/
+build/
+profiles/
+native/
+
+# Python / Node 環境
+tools/.venv/
+tools/__pycache__/
+node_modules/
+
+# 生圖與工具日誌
+tools/gen.log
+tools/gen.out
+
+# 檢查截圖（可重新產生）
+art_src/playtest/
+art_src/preview/
+art_src/qa/
+
+# 參考影片的截圖（原作版權素材，只在本機參考，不上傳）
+art_src/ref/
+
+.DS_Store

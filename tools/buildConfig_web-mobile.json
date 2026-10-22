@@ -1,0 +1,39 @@
+{
+  "platform": "web-mobile",
+  "buildPath": "project://build",
+  "outputName": "web-mobile",
+  "debug": false,
+  "md5Cache": true,
+  "sourceMaps": false,
+  "startScene": "d5d3fa56-65b6-42a6-809d-b9217dc48186",
+  "scenes": [
+    {
+      "url": "db://assets/scenes/Main.scene",
+      "uuid": "d5d3fa56-65b6-42a6-809d-b9217dc48186"
+    }
+  ],
+  "packages": {
+    "web-mobile": {
+      "orientation": "auto",
+      "embedWebDebugger": false
+    }
+  },
+  "splashScreen": {
+    "displayRatio": 1,
+    "totalTime": 0,
+    "watermarkLocation": "default",
+    "autoFit": true,
+    "logo": {
+      "type": "none"
+    },
+    "background": {
+      "type": "default",
+      "color": {
+        "x": 0.04,
+        "y": 0.016,
+        "z": 0.08,
+        "w": 1
+      }
+    }
+  }
+}

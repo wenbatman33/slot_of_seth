@@ -1,0 +1,41 @@
+
+seth_awaken.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: false
+  xy: 0, 0
+  size: 1252, 870
+  orig: 1252, 870
+  offset: 0, 0
+  index: -1
+arm_l
+  rotate: false
+  xy: 1254, 0
+  size: 410, 454
+  orig: 410, 454
+  offset: 0, 0
+  index: -1
+arm_r
+  rotate: false
+  xy: 0, 872
+  size: 410, 454
+  orig: 410, 454
+  offset: 0, 0
+  index: -1
+glow_blue
+  rotate: false
+  xy: 412, 872
+  size: 384, 384
+  orig: 384, 384
+  offset: 0, 0
+  index: -1
+bolt
+  rotate: false
+  xy: 798, 872
+  size: 384, 384
+  orig: 384, 384
+  offset: 0, 0
+  index: -1

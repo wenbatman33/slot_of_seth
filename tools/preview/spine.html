@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/EsotericSoftware/spine-runtimes@3.8/spine-ts/player/css/spine-player.css">
+<script src="https://cdn.jsdelivr.net/gh/EsotericSoftware/spine-runtimes@3.8/spine-ts/build/spine-player.js"></script>
+<style>html,body{margin:0;background:#2a2233}#p{width:var(--w,520px);height:var(--h,720px)}</style>
+</head><body><div id="p"></div>
+<script>
+// Spine 3.8 預覽：tools/spine_preview.py 用來逐格截圖
+const q = new URLSearchParams(location.search);
+const name = q.get('name'), anim = q.get('anim') || 'idle';
+const box = document.getElementById('p');
+box.style.width = (q.get('w') || 520) + 'px';
+box.style.height = (q.get('h') || 720) + 'px';
+new spine.SpinePlayer('p', {
+  jsonUrl: `/assets/resources/spine/${name}/${name}.json`,
+  atlasUrl: `/assets/resources/spine/${name}/${name}.atlas`,
+  animation: anim, premultipliedAlpha: false, alpha: false,
+  backgroundColor: '#2a2233ff', showControls: false,
+  viewport: { padLeft: '4%', padRight: '4%', padTop: '4%', padBottom: '4%' },
+  success: p => { window.P = p; p.pause(); window.ready = true; },
+  error: (p, m) => { window.err = String(m); },
+});
+window.setT = (t) => {
+  const P = window.P, tr = P.animationState.tracks[0];
+  tr.trackTime = t;
+  P.animationState.apply(P.skeleton);
+  P.skeleton.updateWorldTransform();
+};
+</script></body></html>

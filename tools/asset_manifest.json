@@ -1,0 +1,342 @@
+{
+  "_comment": "戰神賽特2 復刻版美術清單 — 全部 AI 原創，風格參考 art_src/ref/ref_layout.png。key = 去背色（green=#00FF00, magenta=#FF00FF, black=加色混合用不去背, none=背景圖）",
+  "style": "Premium Asian mobile slot game art, top-tier quality like ATG / PG Soft titles: stylized semi-realistic digitally painted 3D-look illustration, richly polished gold metal with engraved ancient Egyptian ornaments, glossy jewels, dramatic rim lighting, purple-and-gold palette with turquoise accents, crisp clean edges, ultra detailed, high contrast, readable silhouette.",
+  "items": [
+    {
+      "id": "char_seth",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "ORIGINAL character design for the LEFT side of a slot game screen: Seth, ancient Egyptian god of war. A tall heroic muscular man with bronze-brown skin and a handsome stern face, wearing a tall stylized jackal-like Set-animal helmet crown with two tall pointed ears, made of lapis-blue enamel and polished gold; blue and gold striped nemes flaps on the shoulders; a broad gold usekh collar with lapis and turquoise inlays; gold arm rings and engraved gold bracers; a deep blue pleated shendyt kilt with a gold belt and a hanging gold front apron; a dark navy translucent cape behind his back. POSE: standing upright in a 3/4 view, body turned toward the RIGHT side of the image. His arm on the LEFT side of the image is raised with the elbow bent outward, the open hand at head height with palm up and EMPTY (a magic flame will be added later as a separate effect). His other arm (right side of the image) hangs down relaxed, slightly away from the hip, the hand gripping a long vertical golden was-scepter staff that reaches the bottom edge. CRITICAL FOR SKELETAL RIGGING: both arms must be clearly separated from the torso with visible background gaps between each arm and the body, the face fully unobstructed, the cape outline clearly readable. Framing: from the top of the helmet ears down to the knees, figure centered with small margins, nothing cropped at the top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no floor, no text, no logo."
+    },
+    {
+      "id": "char_goddess",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "ORIGINAL character design for the RIGHT side of a slot game screen: an Egyptian goddess priestess inspired by Bastet. A beautiful young woman with warm tan skin, long straight glossy black hair, dramatic kohl eyeliner, a golden crown headdress shaped like elegant cat ears with purple amethyst gems and a small cobra uraeus in front; a broad gold usekh collar with turquoise and purple inlays; elegant white silk dress with gold trims, a purple sash and a flowing semi-transparent lilac shawl; gold arm cuffs and bracelets. POSE: standing gracefully in a 3/4 view, body turned toward the LEFT side of the image, gentle S-curve. Her arm on the RIGHT side of the image is raised with the elbow bent outward, the open hand at head height with palm up and EMPTY (a purple magic flame will be added later as a separate effect). Her other arm (left side of the image) hangs down gracefully slightly away from her hip with fingers elegantly open. CRITICAL FOR SKELETAL RIGGING: both arms must be clearly separated from the torso with visible background gaps between each arm and the body, the face fully unobstructed, hair outline clearly readable. Framing: from the top of the crown down to the knees, figure centered with small margins, nothing cropped at the top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no floor, no text, no logo."
+    },
+    {
+      "id": "char_seth2",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_seth.png",
+        "art_src/raw/char_seth.png"
+      ],
+      "prompt": "The FIRST attached image is ONLY a POSE reference (a low-resolution game screenshot) — copy the body pose and arm positions, NOT its design. The SECOND attached image is OUR character design: redraw OUR Seth character from the second image (same face, same jackal-ear helmet crown, same blue-and-gold striped nemes, same collar, arm bands, bracers, belt, blue kilt with gold apron and dark navy cape, same colors and rendering quality) but WITHOUT the staff, in the pose of the first image: standing in a 3/4 view with the body turned toward the RIGHT side of the image. His arm on the LEFT side of the image (the outer arm) is raised: upper arm out to the side, elbow bent, the open hand held beside his head at about head height, palm facing up with fingers spread like holding a ball of fire, the palm EMPTY (the blue magic flame will be added later as a separate effect). His other arm on the RIGHT side of the image hangs down relaxed along his body with the hand near the belt, with a small visible background gap between that arm and the torso. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and torso by background, face unobstructed. Framing: from the top of the helmet ears down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "char_goddess2",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_goddess.png",
+        "art_src/raw/char_goddess.png"
+      ],
+      "prompt": "The FIRST attached image is ONLY a POSE reference (a low-resolution game screenshot) — copy the body pose and arm positions, NOT its design. The SECOND attached image is OUR character design: redraw OUR Egyptian goddess priestess from the second image (same face, same golden cat-ear crown with cobra, same long black hair, same gold collar, same white-and-gold dress with purple sash and lilac shawl, same colors and rendering quality) in the pose of the first image: standing in a graceful 3/4 view with the body turned toward the LEFT side of the image, hips shifted in a contrapposto S-curve. Her arm on the RIGHT side of the image (the outer arm) is raised with the elbow bent, the open hand held at about head height beside her head, palm facing up with fingers elegantly spread, the palm EMPTY (a purple magic flame will be added later as a separate effect). Her other arm on the LEFT side of the image is bent with the hand resting on her hip and the elbow pointing outward, leaving a clear background gap between the arm and her waist. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. Framing: from the top of the crown down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "char_goddess5b",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/keyed/char_goddess4a.png",
+        "art_src/keyed/char_seth2.png"
+      ],
+      "prompt": "FIRST attached image: OUR goddess priestess — keep EXACTLY her design (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash and gold cat-head belt apron, same lilac shawl, same gold arm cuffs, same colors and rendering quality), her pose, her arm positions and her body direction (torso, chest and face turned 3/4 toward the LEFT side of the image; near arm on the right side of the image raised with the open palm up at head height, palm EMPTY; far arm on the left side of the image with the hand on her hip and elbow out, with a background gap between that arm and her waist). WHAT MUST CHANGE: her BODY PROPORTIONS and FRAMING. Make her a tall, slender, elegant goddess with realistic heroic proportions of about 8 heads tall — a SMALLER head relative to her body, longer neck, longer torso and long legs. SECOND attached image is only a SCALE reference: her head should look about the same size as or slightly smaller than that man's head would if they stood side by side, and her body slimmer. FRAMING: show her from the top of the crown down to the middle of her calves (much more of her legs visible than in the first image), the whole figure centered, nothing cropped at the top or sides, the figure filling the canvas height. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text. Variation B: slightly more slender waist and longer legs."
+    },
+    {
+      "id": "char_goddess5a",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/keyed/char_goddess4a.png",
+        "art_src/keyed/char_seth2.png"
+      ],
+      "prompt": "FIRST attached image: OUR goddess priestess — keep EXACTLY her design (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash and gold cat-head belt apron, same lilac shawl, same gold arm cuffs, same colors and rendering quality), her pose, her arm positions and her body direction (torso, chest and face turned 3/4 toward the LEFT side of the image; near arm on the right side of the image raised with the open palm up at head height, palm EMPTY; far arm on the left side of the image with the hand on her hip and elbow out, with a background gap between that arm and her waist). WHAT MUST CHANGE: her BODY PROPORTIONS and FRAMING. Make her a tall, slender, elegant goddess with realistic heroic proportions of about 8 heads tall — a SMALLER head relative to her body, longer neck, longer torso and long legs. SECOND attached image is only a SCALE reference: her head should look about the same size as or slightly smaller than that man's head would if they stood side by side, and her body slimmer. FRAMING: show her from the top of the crown down to the middle of her calves (much more of her legs visible than in the first image), the whole figure centered, nothing cropped at the top or sides, the figure filling the canvas height. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "char_goddess4b",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_goddess.png",
+        "art_src/ref/seth2_mirror_dir.png",
+        "art_src/keyed/char_goddess3a.png"
+      ],
+      "prompt": "FIRST attached image: a low-resolution game screenshot used ONLY as a pose reference. SECOND attached image: used ONLY as a BODY-DIRECTION reference (copy only which way the torso faces, nothing else). THIRD attached image: OUR character design — redraw OUR Egyptian goddess priestess (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash and gold cat-head belt apron, same lilac shawl, same gold arm cuffs, same colors and rendering quality). BODY ORIENTATION IS THE MOST IMPORTANT REQUIREMENT: her torso, chest and hips are turned in a 3/4 view toward the LEFT side of the image — exactly the same body direction as the man in the SECOND attached image. The center line of her chest (the sternum and neckline) is shifted toward the LEFT side of her torso; her shoulder on the RIGHT side of the image is CLOSER to the viewer and her shoulder on the LEFT side of the image is FARTHER away and partly turned away. Her face and eyes also look toward the left side of the image. Contrapposto S-curve, hips shifted slightly. ARMS: her NEAR arm on the RIGHT side of the image is raised with the elbow bent, the open hand held at about head height to the right of her head, palm facing up, fingers elegantly spread, the palm EMPTY (a purple flame will be added later). Her FAR arm on the LEFT side of the image is bent with the hand resting on her hip and the elbow pointing out to the left behind her body, with a visible background gap between that arm and her waist. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. Framing: from the top of the crown down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text. Variation B: slightly more elegant, chin a little higher."
+    },
+    {
+      "id": "char_goddess4a",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_goddess.png",
+        "art_src/ref/seth2_mirror_dir.png",
+        "art_src/keyed/char_goddess3a.png"
+      ],
+      "prompt": "FIRST attached image: a low-resolution game screenshot used ONLY as a pose reference. SECOND attached image: used ONLY as a BODY-DIRECTION reference (copy only which way the torso faces, nothing else). THIRD attached image: OUR character design — redraw OUR Egyptian goddess priestess (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash and gold cat-head belt apron, same lilac shawl, same gold arm cuffs, same colors and rendering quality). BODY ORIENTATION IS THE MOST IMPORTANT REQUIREMENT: her torso, chest and hips are turned in a 3/4 view toward the LEFT side of the image — exactly the same body direction as the man in the SECOND attached image. The center line of her chest (the sternum and neckline) is shifted toward the LEFT side of her torso; her shoulder on the RIGHT side of the image is CLOSER to the viewer and her shoulder on the LEFT side of the image is FARTHER away and partly turned away. Her face and eyes also look toward the left side of the image. Contrapposto S-curve, hips shifted slightly. ARMS: her NEAR arm on the RIGHT side of the image is raised with the elbow bent, the open hand held at about head height to the right of her head, palm facing up, fingers elegantly spread, the palm EMPTY (a purple flame will be added later). Her FAR arm on the LEFT side of the image is bent with the hand resting on her hip and the elbow pointing out to the left behind her body, with a visible background gap between that arm and her waist. CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. Framing: from the top of the crown down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "char_goddess3a",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_goddess.png",
+        "art_src/raw/char_goddess2.png"
+      ],
+      "prompt": "The FIRST attached image is ONLY a POSE and FACING-DIRECTION reference (low-resolution game screenshot) — copy its body direction and arm positions, NOT its design. The SECOND attached image is OUR character design: redraw OUR Egyptian goddess priestess (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash, same lilac shawl, same gold arm cuffs, same colors and rendering quality). FACING DIRECTION IS CRITICAL: her whole body, chest, hips and face are turned in a 3/4 view toward the LEFT side of the image (she is looking and facing toward the left edge of the image, as if looking at a slot machine reel located to her left). Her shoulder on the left side of the image is closer to the viewer, her shoulder on the right side of the image is farther away. Head tilted slightly, eyes looking toward the left side of the image. Hips pushed out toward the left side of the image in a contrapposto S-curve. ARMS: her near arm on the LEFT side of the image is bent with the hand resting on her hip and the elbow pointing out to the left, leaving a clear background gap between the arm and her waist. Her far arm on the RIGHT side of the image is raised with the elbow bent, the open hand held at about head height to the right of her head, palm facing up with fingers elegantly spread, the palm EMPTY (a purple magic flame will be added later). CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. Framing: from the top of the crown down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "char_goddess3b",
+      "size": "1024x1536",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_goddess_mirror.png",
+        "art_src/ref/char_goddess2_mirror.png"
+      ],
+      "prompt": "The FIRST attached image is ONLY a POSE and FACING-DIRECTION reference (low-resolution game screenshot) — copy its body direction and arm positions, NOT its design. The SECOND attached image is OUR character design: redraw OUR Egyptian goddess priestess (same face, same golden cat-ear crown with cobra, same long straight black hair, same gold-turquoise-purple collar, same white-and-gold dress with purple sash, same lilac shawl, same gold arm cuffs, same colors and rendering quality). FACING DIRECTION IS CRITICAL: her whole body, chest, hips and face are turned in a 3/4 view toward the RIGHT side of the image (she is looking and facing toward the right edge of the image). Her shoulder on the right side of the image is closer to the viewer, her shoulder on the left side of the image is farther away. Head tilted slightly, eyes looking toward the right side of the image. Hips pushed out toward the right side of the image in a contrapposto S-curve. ARMS: her near arm on the RIGHT side of the image is bent with the hand resting on her hip and the elbow pointing out to the right, leaving a clear background gap between the arm and her waist. Her far arm on the LEFT side of the image is raised with the elbow bent, the open hand held at about head height to the left of her head, palm facing up with fingers elegantly spread, the palm EMPTY (a purple magic flame will be added later). CRITICAL FOR SKELETAL RIGGING: the raised arm fully separated from the head and hair by background, face unobstructed. Framing: from the top of the crown down to the knees, centered, nothing cropped at top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text.",
+      "post": "mirror"
+    },
+    {
+      "id": "seth_awaken",
+      "size": "1536x1024",
+      "key": "green",
+      "ref": [
+        "art_src/raw/char_seth.png",
+        "art_src/ref/ref_awaken.png"
+      ],
+      "prompt": "Close-up half-body (from the top of the helmet down to the waist) of EXACTLY the same Seth character as in the first attached image (same helmet, collar, armor, colors and face) in his AWAKENED moment for a cinematic slot game cut-in: facing the viewer, both arms raised up beside his head with fists clenched in a mighty power pose, elbows out, chest forward, muscles tense, eyes glowing intense blue-white, gold armor gleaming. The second attached image is only a reference for the pose energy. CRITICAL FOR SKELETAL RIGGING: both raised arms clearly separated from the head and helmet with visible background gaps. No lightning or effects (they will be added separately). Figure centered, nothing cropped at the top. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "sym_ruby",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game low-value symbol: a single round brilliant-cut red ruby gem, glossy faceted, glowing inner light, bright specular highlights, viewed from the front, filling about 80% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_amethyst",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game low-value symbol: a single round brilliant-cut violet amethyst gem, glossy faceted, glowing inner light, bright specular highlights, viewed from the front, filling about 80% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_topaz",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game low-value symbol: a single round brilliant-cut golden-yellow topaz gem, glossy faceted, warm glowing inner light, bright specular highlights, viewed from the front, filling about 80% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_emerald",
+      "size": "1024x1024",
+      "key": "magenta",
+      "prompt": "Slot game low-value symbol: a single emerald gem cut as a rhombus diamond shape (pointing up and down), glossy faceted vivid green, glowing inner light, bright specular highlights, viewed from the front, filling about 80% of the canvas height, centered. BACKGROUND: perfectly flat solid pure magenta #FF00FF, no shadow, no text."
+    },
+    {
+      "id": "sym_sapphire",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game low-value symbol: a single sapphire gem cut as a rhombus diamond shape (pointing up and down), glossy faceted vivid royal blue, glowing inner light, bright specular highlights, viewed from the front, filling about 80% of the canvas height, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_bow",
+      "size": "1024x1024",
+      "key": "magenta",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game high-value symbol, ORIGINAL design: a round medallion coin with a thick engraved polished gold rim and a deep jade-green enamel face, with an ornate golden Egyptian composite bow and arrow in relief across it. Glossy, detailed, front view, filling about 88% of the canvas, centered. BACKGROUND: perfectly flat solid pure magenta #FF00FF, no shadow, no text."
+    },
+    {
+      "id": "sym_cobra",
+      "size": "1024x1024",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game high-value symbol, ORIGINAL design: a round medallion coin with a thick engraved polished gold rim and a deep royal-purple enamel face, with a golden rearing cobra coiled around a short golden scepter in relief. Glossy, detailed, front view, filling about 88% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_khopesh",
+      "size": "1024x1024",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game high-value symbol, ORIGINAL design: a round medallion coin with a thick engraved polished gold rim and a warm burnished bronze-copper face, with a golden Egyptian khopesh sickle-sword in relief. Glossy, detailed, front view, filling about 88% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_eye",
+      "size": "1024x1024",
+      "key": "magenta",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game high-value symbol, ORIGINAL design: a round medallion coin with a thick engraved polished gold rim and a turquoise-teal enamel face, with a golden Eye of Horus (wedjat eye) in relief, the eye white and pupil detailed. Glossy, detailed, front view, filling about 88% of the canvas, centered. BACKGROUND: perfectly flat solid pure magenta #FF00FF, no shadow, no text."
+    },
+    {
+      "id": "sym_pharaoh",
+      "size": "1024x1024",
+      "key": "green",
+      "ref": [
+        "art_src/raw/char_seth.png"
+      ],
+      "prompt": "Slot game premium symbol: a square ornate polished gold frame with rounded corners and engraved Egyptian patterns, inside it a glowing golden portrait bust of the Seth character from the attached image (same jackal-like helmet crown), rendered entirely in gleaming gold with blue gem eyes. Front view, filling about 90% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "sym_scatter",
+      "size": "1024x1024",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game SCATTER symbol, ORIGINAL design: a majestic golden sacred scarab beetle with outstretched gold feathered wings, a large red ruby sun disk above its head, blue lapis inlays on its body, glowing magical aura. Front view, filling about 85% of the canvas width, centered, leave the bottom 20% empty (a SCATTER text label will be added later in code). BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "orb_green",
+      "size": "1024x1024",
+      "key": "magenta",
+      "prompt": "Slot game multiplier orb: a glossy round emerald-green glass sphere with swirling inner magic light, set in a thin ornate gold ring with four small gold studs, empty center (a number will be drawn on top in code). Front view, filling about 85% of the canvas, centered. BACKGROUND: perfectly flat solid pure magenta #FF00FF, no shadow, no text, no numbers."
+    },
+    {
+      "id": "orb_sun",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game super multiplier orb: a radiant golden sun disk with sharp gold spikes all around like a starburst, a glossy deep blue lapis center, glowing intensely. Front view, filling about 88% of the canvas, centered, the center empty of symbols (a number will be drawn on top in code). BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text, no numbers."
+    },
+    {
+      "id": "bg_land_purple",
+      "size": "1536x1024",
+      "key": "none",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Wide landscape background for an Egyptian slot game, ORIGINAL composition: the grand interior of an ancient Egyptian temple at purple dusk, massive carved stone columns with hieroglyphs on both sides, golden god statues in shadowy alcoves, braziers with warm orange fire, a deep violet and magenta sky glowing through a huge doorway in the center, gold accents, atmospheric haze and floating dust. The CENTER area must be calm and slightly darker because a reel grid will cover it. No characters, no people, no text, no UI."
+    },
+    {
+      "id": "bg_land_fire",
+      "size": "1536x1024",
+      "key": "none",
+      "ref": [
+        "art_src/raw/bg_land_purple.png"
+      ],
+      "prompt": "The SAME temple background as the attached image (same composition, columns, statues and doorway), but in an AWAKENED fiery mood: the sky glows intense orange and red with embers and sparks, braziers blazing higher, golden light everywhere, dramatic. The CENTER area calm and slightly darker. No characters, no text, no UI."
+    },
+    {
+      "id": "bg_port_purple",
+      "size": "1024x1536",
+      "key": "none",
+      "ref": [
+        "art_src/raw/bg_land_purple.png"
+      ],
+      "prompt": "Tall PORTRAIT version (9:16 feel) of the attached Egyptian temple background at purple dusk, same style and color palette: carved stone columns at both sides, golden statues, braziers, violet glowing sky at the top through a huge doorway. The middle area calm and slightly darker because a reel grid will cover it. No characters, no text, no UI."
+    },
+    {
+      "id": "bg_port_fire",
+      "size": "1024x1536",
+      "key": "none",
+      "ref": [
+        "art_src/raw/bg_port_purple.png"
+      ],
+      "prompt": "The SAME portrait temple background as the attached image (same composition), but in an AWAKENED fiery mood: intense orange-red sky with embers and sparks, blazing braziers, golden light. Middle area calm and slightly darker. No characters, no text, no UI."
+    },
+    {
+      "id": "ui_frame",
+      "size": "1536x1024",
+      "key": "green",
+      "ref": [
+        "art_src/ref/ref_layout.png"
+      ],
+      "prompt": "Slot game reel frame, ORIGINAL design: a horizontal rectangular ornate polished gold Egyptian frame border (inner opening aspect ratio about 6:5, the border around 4% of the width thick) with engraved lotus and hieroglyph patterns, small blue lapis gems at the four corners, and on the top edge center a pair of large spread golden falcon wings flanking an empty dark-teal rounded plaque. The inside opening of the frame and everything outside the frame must be perfectly flat solid pure green #00FF00 chroma key. Front view, symmetric, centered. No text."
+    },
+    {
+      "id": "ui_mult_ring",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game UI: an ornate round polished gold ring medallion holder with engraved Egyptian patterns and small spikes around the rim, the inner circle is a dark glossy purple-black lens (a multiplier number will be drawn on top in code). Front view, filling about 88% of the canvas, centered. BACKGROUND outside the ring: perfectly flat solid pure green #00FF00, no text."
+    },
+    {
+      "id": "ui_spin",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "Slot game SPIN button: a large round button with a thick ornate polished gold rim, a glossy deep purple center with swirling magic, and two bold golden curved circular arrows chasing each other in the middle. Front view, filling about 90% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "ui_coin",
+      "size": "1024x1024",
+      "key": "green",
+      "prompt": "A single shiny thick gold coin with an embossed Egyptian ankh symbol, slightly tilted 3/4 view, glossy reflections. Filling about 85% of the canvas, centered. BACKGROUND: perfectly flat solid pure green #00FF00, no shadow, no text."
+    },
+    {
+      "id": "title_bigwin",
+      "size": "1536x1024",
+      "key": "green",
+      "prompt": "Slot game celebration title text logo reading exactly \"BIG WIN\" on two lines (BIG above WIN), chunky bold 3D letters with glossy royal-blue faces, thick polished gold bevel outlines, sparkles and a few gold coins around. Front view, centered. Spell the text exactly: BIG WIN. BACKGROUND: perfectly flat solid pure green #00FF00, no other text."
+    },
+    {
+      "id": "title_megawin",
+      "size": "1536x1024",
+      "key": "green",
+      "prompt": "Slot game celebration title text logo reading exactly \"MEGA WIN\" on two lines (MEGA above WIN), chunky bold 3D letters with glossy crimson-red faces, thick polished gold bevel outlines, fiery glow and sparkles. Front view, centered. Spell the text exactly: MEGA WIN. BACKGROUND: perfectly flat solid pure green #00FF00, no other text."
+    },
+    {
+      "id": "title_superwin",
+      "size": "1536x1024",
+      "key": "green",
+      "prompt": "Slot game celebration title text logo reading exactly \"SUPER WIN\" on two lines (SUPER above WIN), chunky bold 3D letters with glossy magenta-purple faces, thick polished gold bevel outlines, magical purple sparkles. Front view, centered. Spell the text exactly: SUPER WIN. BACKGROUND: perfectly flat solid pure green #00FF00, no other text."
+    },
+    {
+      "id": "title_legendary",
+      "size": "1536x1024",
+      "key": "green",
+      "prompt": "Slot game celebration title text logo reading exactly \"LEGENDARY WIN\" on two lines (LEGENDARY above WIN), chunky bold 3D letters with brilliant gold faces, purple gem outlines and a royal purple bevel, radiant light rays and sparkles. Front view, centered. Spell the text exactly: LEGENDARY WIN. BACKGROUND: perfectly flat solid pure green #00FF00, no other text."
+    },
+    {
+      "id": "title_freegames",
+      "size": "1536x1024",
+      "key": "green",
+      "prompt": "Slot game title text logo reading exactly \"FREE GAMES\" on two lines (FREE above GAMES), chunky bold 3D letters with brilliant polished gold faces and a dark brown bevel outline, sparkles. Front view, centered. Spell the text exactly: FREE GAMES. BACKGROUND: perfectly flat solid pure green #00FF00, no other text."
+    },
+    {
+      "id": "fx_flame_blue",
+      "size": "1024x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a single tall swirling magical flame, bright white-cyan core fading to electric blue and deep blue wispy edges, upward tongues, centered, filling 80% of the height. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "fx_flame_purple",
+      "size": "1024x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a single tall swirling magical flame, bright white-pink core fading to vivid magenta and deep violet wispy edges, upward tongues, centered, filling 80% of the height. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "fx_fire_wave",
+      "size": "1536x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a huge sweeping wall of realistic orange and yellow fire with bright white-hot core and curling flame tongues, flowing from left to right, filling most of the frame. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "fx_purple_wave",
+      "size": "1536x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a huge sweeping wave of magical purple and violet flames and smoke with bright white-pink core and curling wisps, flowing from right to left, filling most of the frame. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "fx_lightning",
+      "size": "1024x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a branching bolt of bright blue-white electric lightning crackling diagonally across the frame, glowing cyan halo. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "fx_burst",
+      "size": "1024x1024",
+      "key": "black",
+      "prompt": "Visual effect texture: a glowing golden-white magical dust explosion burst, soft round puff of shimmering sparkles and sand particles radiating outward, centered. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    }
+  ]
+}
