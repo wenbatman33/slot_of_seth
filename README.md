@@ -43,6 +43,15 @@ cd slot_of_seth/extensions/cocos-mcp-server && npm install && npm run build
 2. 開啟後 MCP 伺服器會自動在 `http://127.0.0.1:3000/mcp` 啟動（設定：`settings/mcp-server.json`）；選單「擴充功能 → Cocos MCP Server」可看狀態
 3. 建置網頁版：`bash tools/build_web.sh`（會自動關掉 Cocos 預設啟動畫面，改用 `build-templates/web-mobile/` 的遊戲載入畫面），本機試玩：`node tools/serve.mjs 8765`
 
+## 線上試玩（GitHub Pages）
+**https://wenbatman33.github.io/slot_of_seth/**（手機、電腦都可以玩）
+
+Pages 從 `main` 根目錄發佈：根目錄 `index.html` 導向 `play/`，`play/` 是建置好的網頁版，`.nojekyll` 讓 Pages 不略過 `_` 開頭的引擎檔。更新線上版：
+```bash
+bash tools/build_web.sh && bash tools/publish_pages.sh
+git add -A && git commit -m "更新線上版" && git push
+```
+
 `extensions/cocos-mcp-server` 是 [DaxianLee/cocos-mcp-server](https://github.com/DaxianLee/cocos-mcp-server) 的 git submodule。
 `art_src/ref/`（參考影片截圖）與各種檢查截圖不放進版控。
 

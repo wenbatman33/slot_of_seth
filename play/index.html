@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>戰神賽特 II・覺醒之力</title>
+
+  <meta name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true,viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit"/>
+  <meta name="force-rendering" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="full-screen" content="yes"/>
+  <meta name="x5-fullscreen" content="true"/>
+  <meta name="360-fullscreen" content="true"/>
+  <meta name="x5-page-mode" content="app">
+  <meta name="theme-color" content="#12061f">
+  <link rel="icon" href="loading/scarab.png">
+
+  <link rel="stylesheet" type="text/css" href="style.02f4a.css"/>
+
+  <style>
+    /* 遊戲自訂載入畫面（取代 Cocos 預設啟動畫面） */
+    html, body { background: #0b0414; }
+    #seth2Loading {
+      position: fixed; inset: 0; z-index: 9999; overflow: hidden;
+      background: #0b0414 url(loading/bg_land.jpg) center / cover no-repeat;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      transition: opacity .6s ease;
+    }
+    @media (orientation: portrait) { #seth2Loading { background-image: url(loading/bg_port.jpg); } }
+    #seth2Loading::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(20,6,36,.35) 0%, rgba(8,2,16,.85) 75%);
+    }
+    #seth2Loading.done { opacity: 0; pointer-events: none; }
+    .sl-emblem { position: relative; width: min(30vmin, 220px); aspect-ratio: 1; margin-bottom: 2vmin; }
+    .sl-emblem .glow {
+      position: absolute; inset: -40%; background: url(loading/glow.png) center / contain no-repeat;
+      mix-blend-mode: screen; animation: sl-pulse 2.4s ease-in-out infinite;
+    }
+    .sl-emblem .rays {
+      position: absolute; inset: -55%;
+      background: repeating-conic-gradient(from 0deg, rgba(255,214,120,.22) 0deg 6deg, transparent 6deg 22deg);
+      -webkit-mask: radial-gradient(circle, #000 25%, transparent 68%); mask: radial-gradient(circle, #000 25%, transparent 68%);
+      animation: sl-spin 18s linear infinite;
+    }
+    .sl-emblem img { position: relative; width: 100%; height: 100%; object-fit: contain; animation: sl-float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 18px rgba(255,190,80,.55)); }
+    .sl-title {
+      position: relative; font-size: min(9vmin, 68px); font-weight: 900; letter-spacing: .08em; line-height: 1.1;
+      background: linear-gradient(180deg, #fff7d6 0%, #ffd56b 45%, #c27a12 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 3px 0 #3a1300) drop-shadow(0 0 14px rgba(255,170,60,.45));
+    }
+    .sl-sub {
+      position: relative; margin-top: 1vmin; font-size: min(3.6vmin, 26px); letter-spacing: .6em; padding-left: .6em;
+      color: #bfefff; text-shadow: 0 0 10px #2d8cff, 0 2px 0 #071c3a;
+    }
+    .sl-bar {
+      position: relative; width: min(62vmin, 460px); height: min(2.4vmin, 16px); margin-top: 5vmin;
+      border: 2px solid #d9a640; border-radius: 99px; background: rgba(10,3,20,.75);
+      box-shadow: 0 0 12px rgba(255,190,80,.35), inset 0 0 8px rgba(0,0,0,.8);
+    }
+    .sl-bar i {
+      position: absolute; left: 2px; top: 2px; bottom: 2px; width: 0%; border-radius: 99px;
+      background: linear-gradient(90deg, #8a3cff, #ff7ae6 45%, #ffd56b);
+      box-shadow: 0 0 12px rgba(255,140,230,.8); transition: width .25s ease-out;
+    }
+    .sl-bar b {
+      position: absolute; top: 50%; width: min(5vmin, 34px); aspect-ratio: 1; transform: translate(-50%, -50%);
+      background: url(loading/glow.png) center / contain no-repeat; mix-blend-mode: screen; transition: left .25s ease-out;
+    }
+    .sl-pct { position: relative; margin-top: 1.6vmin; font-size: min(3.4vmin, 22px); color: #ffe7a0;
+      text-shadow: 0 2px 0 #2a0a00; font-weight: 700; letter-spacing: .1em; }
+    .sl-tip { position: relative; margin-top: 1vmin; font-size: min(3vmin, 18px); color: #d8c6ff; opacity: .85; min-height: 1.4em; }
+    /* 建置版本（QA P2-16）：角落小字，方便確認測的是哪一版 */
+    #seth2Ver { position: fixed; left: 6px; bottom: 2px; z-index: 9998; font: 10px/1.2 monospace; color: rgba(255,255,255,.35);
+      pointer-events: none; user-select: none; }
+    @keyframes sl-spin { to { transform: rotate(360deg); } }
+    @keyframes sl-pulse { 0%,100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
+    @keyframes sl-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+  </style>
+</head>
+<body>
+  <div id="seth2Ver">v1022-1941 8bd5315</div>
+  <div id="seth2Loading">
+    <div class="sl-emblem"><div class="rays"></div><div class="glow"></div><img src="loading/scarab.png" alt=""></div>
+    <div class="sl-title">戰神賽特 II</div>
+    <div class="sl-sub">覺醒之力</div>
+    <div class="sl-bar"><i></i><b></b></div>
+    <div class="sl-pct">0%</div>
+    <div class="sl-tip">古老的力量正在甦醒…</div>
+  </div>
+  <script>
+    // 載入進度：引擎與腳本下載期間先以時間推進到 60%，遊戲資源載入後由 Main.ts 回報剩下的 40%
+    (function () {
+      var root = document.getElementById('seth2Loading');
+      var bar = root.querySelector('.sl-bar i'), dot = root.querySelector('.sl-bar b');
+      var pct = root.querySelector('.sl-pct'), tip = root.querySelector('.sl-tip');
+      var tips = ['古老的力量正在甦醒…', '賽特與女祭司正在施法…', '4 個 SCATTER 開啟免費遊戲', '覺醒之力：法老百搭與太陽倍數球', '最高可贏得 5000 倍'];
+      var shown = 0, target = 0, game = 0, t0 = Date.now(), ti = 0;
+      function render() {
+        var boot = 60 * (1 - Math.exp(-(Date.now() - t0) / 2500));   // 引擎啟動階段的估計進度
+        target = Math.max(boot, 60 + game * 40);
+        shown += (target - shown) * 0.2;
+        var v = Math.min(100, shown);
+        bar.style.width = 'calc(' + v + '% - 4px)';
+        dot.style.left = v + '%';
+        pct.textContent = Math.floor(v) + '%';
+        if (!root.classList.contains('done')) requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+      var tipTimer = setInterval(function () { tip.textContent = tips[++ti % tips.length]; }, 2200);
+      window.__seth2Loading = function (p) { game = Math.max(game, Math.min(1, p)); };
+      window.__seth2LoadingDone = function () {
+        game = 1;
+        setTimeout(function () {
+          clearInterval(tipTimer);
+          root.classList.add('done');
+          setTimeout(function () { root.remove(); }, 700);
+        }, 350);
+      };
+    })();
+  </script>
+  <div id="GameDiv" cc_exact_fit_screen="true">
+      <div id="Cocos3dGameContainer">
+        <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+      </div>
+    </div>
+  
+
+<!-- Polyfills bundle. -->
+
+<script src="src/polyfills.bundle.5adbf.js" charset="utf-8"> </script>
+
+
+<!-- SystemJS support. -->
+<script src="src/system.bundle.543e6.js" charset="utf-8"> </script>
+
+<!-- Import map -->
+<script src="src/import-map.92567.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+<script>
+    System.import('./index.e42ea.js').catch(function(err) { console.error(err); })
+</script>
+
+</body>
+</html>
