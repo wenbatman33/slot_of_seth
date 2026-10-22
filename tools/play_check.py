@@ -55,7 +55,7 @@ finally:
     _lock.__exit__(None, None, None)
 errs = [l for l in logs if l.startswith(("[error]", "[pageerror]", "[reqfail]", "[http")) or "warn" in l[:8]]
 print(f"console: {len(logs)} 行，錯誤/警告 {len(errs)}")
-for l in errs[:40]:
+for l in (logs if "--all" in sys.argv else errs)[:40]:
     print("  ", l[:400])
 for l in logs:
     if "404" in l or "Failed" in l: pass

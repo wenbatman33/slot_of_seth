@@ -1,0 +1,62 @@
+
+goddess.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: false
+  xy: 0, 0
+  size: 665, 1151
+  orig: 665, 1151
+  offset: 0, 0
+  index: -1
+body_glow
+  rotate: false
+  xy: 667, 0
+  size: 332, 575
+  orig: 332, 575
+  offset: 0, 0
+  index: -1
+arm_o
+  rotate: false
+  xy: 1001, 0
+  size: 331, 270
+  orig: 331, 270
+  offset: 0, 0
+  index: -1
+arm_i
+  rotate: false
+  xy: 1334, 0
+  size: 173, 269
+  orig: 173, 269
+  offset: 0, 0
+  index: -1
+glow_purple
+  rotate: false
+  xy: 1509, 0
+  size: 165, 165
+  orig: 165, 165
+  offset: 0, 0
+  index: -1
+arm_o_glow
+  rotate: false
+  xy: 1676, 0
+  size: 165, 135
+  orig: 165, 135
+  offset: 0, 0
+  index: -1
+arm_i_glow
+  rotate: false
+  xy: 1843, 0
+  size: 86, 134
+  orig: 86, 134
+  offset: 0, 0
+  index: -1
+flame_purple
+  rotate: false
+  xy: 0, 1153
+  size: 124, 124
+  orig: 124, 124
+  offset: 0, 0
+  index: -1

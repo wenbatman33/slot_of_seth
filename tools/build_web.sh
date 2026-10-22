@@ -11,6 +11,12 @@ mkdir -p "$ROOT/temp"
 if ! grep -q "build Task (web-mobile) Finished" "$LOG"; then
   echo "建置失敗，請看 $LOG"; exit 1
 fi
+# Cocos 有時會印出 Finished 但其實沒打包場景與資源（例如資源資料庫還沒準備好），要檢查輸出是否完整
+OUT="$ROOT/build/web-mobile"
+NFILES=$(find "$OUT" -type f | wc -l | tr -d ' ')
+if grep -q "初始场景不存在" "$LOG" || [ ! -d "$OUT/assets/main/import" ] || [ ! -d "$OUT/assets/resources/native" ] || [ "$NFILES" -lt 100 ]; then
+  echo "建置輸出不完整（$NFILES 個檔，缺場景或資源），請看 $LOG"; exit 1
+fi
 node - "$ROOT/build/web-mobile/src" <<'JS'
 const fs = require('fs'), path = require('path');
 const dir = process.argv[2];

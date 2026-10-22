@@ -1,10 +1,10 @@
 {
-  "ver": "0.0.1",
-  "importer": "*",
+  "ver": "1.0.6",
+  "importer": "bitmap-font",
   "imported": true,
   "uuid": "5a140c2a-e023-42d7-bf68-295d60e14431",
   "files": [
-    ".fnt"
+    ".json"
   ],
   "subMetas": {},
   "userData": {

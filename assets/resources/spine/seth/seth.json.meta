@@ -1,6 +1,6 @@
 {
-  "ver": "0.0.1",
-  "importer": "*",
+  "ver": "1.2.7",
+  "importer": "spine-data",
   "imported": true,
   "uuid": "ed3f0457-ca33-41b6-a56d-66d748f22d58",
   "files": [
