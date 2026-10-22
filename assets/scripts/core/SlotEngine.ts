@@ -231,8 +231,13 @@ export class SlotEngine {
    * 一轉完整結果（包含所有消除步驟）
    * @param totalMultBefore 免費遊戲目前累計倍數
    */
-  spin(mode: Mode, bet: number, totalMultBefore = 0, buy = false): SpinResult {
+  spin(mode: Mode, bet: number, totalMultBefore = 0, buy = false, opts: { forceOrb?: number } = {}): SpinResult {
     const initial = this.makeBoard(mode, buy ? (this.rng.next() < 0.85 ? 4 : 5) : 0);
+    // DEV：產盤時就放入倍數球，之後的中獎判定與倍數計算都會算到它（QA P2-12）
+    if (opts.forceOrb) {
+      const c = Math.floor(this.rng.next() * COLS), r = Math.floor(this.rng.next() * ROWS);
+      initial[c][r] = { id: 'orb', mult: opts.forceOrb, uid: this.uid++ };
+    }
     let board = SlotEngine.clone(initial);
     const steps: TumbleStep[] = [];
     let baseWin = 0;

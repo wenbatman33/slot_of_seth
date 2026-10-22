@@ -20,6 +20,14 @@ const HEADER_TIPS_AWAKEN = [
 /** 購買特色按鈕（使用者要求先拿掉，之後要再開就改成 true） */
 const BUY_ENABLED = false;
 
+/** 數字彈跳：放大後回到版面設定的縮放（Main.applyLayout 寫在 __ls） */
+function pop(n: Node, k: number, dur: number) {
+    const b = (n as any).__ls || 1;
+    Tween.stopAllByTarget(n);
+    n.setScale(b * k, b * k, 1);
+    tween(n).to(dur, { scale: new Vec3(b, b, 1) }, { easing: 'backOut' }).start();
+}
+
 /** 圓形小按鈕（深色底 + 金框 + 圖示） */
 function roundBtn(parent: Node, key: string, icon: string, r = 46): Node {
     const n = Kit.mk(key, parent, r * 2, r * 2);
@@ -51,6 +59,7 @@ export class Hud {
     private headerMsg!: Label;
     private headerNum!: Label;
     private multL!: Label;
+    private multRing!: Sprite;
     private fgNum!: Label;
     private jpL: Label[] = [];
     private spinArrow!: Node;
@@ -123,18 +132,20 @@ export class Hud {
         this.headerNum.node.getComponent(UITransform)!.setContentSize(250, 52);
         this.headerNum.node.active = false;
         this.reg('header', n, this.headerMsg);
+        this.reg('headerMsg', this.headerMsg.node);
+        this.reg('headerNum', this.headerNum.node);
     }
 
     private buildMult(parent: Node) {
         const n = Kit.mk('multRing', parent, 150, 150);
-        const ring = Kit.sprite(n, Assets.sf('ui_mult_ring'), 'ring', 150, 150);
-        void ring;
+        this.multRing = Kit.sprite(n, Assets.sf('ui_mult_ring'), 'ring', 150, 150);
         this.multL = Kit.bmLabel(n, Assets.fonts.num_white, '0x', 46, 'mult');
         this.multL.overflow = Label.Overflow.SHRINK;
         this.multL.enableWrapText = false;
         this.multL.node.getComponent(UITransform)!.setContentSize(84, 56);
         n.active = false;
         this.reg('multRing', n, this.multL);
+        this.reg('multNum', this.multL.node);
     }
 
     private buildFg(parent: Node) {
@@ -147,6 +158,7 @@ export class Hud {
         this.fgNum.node.setPosition(0, 85, 0);
         n.active = false;
         this.reg('fgCounter', n, this.fgNum);
+        this.reg('fgNum', this.fgNum.node);
     }
 
     private buildBottom(parent: Node) {
@@ -284,8 +296,15 @@ export class Hud {
     }
 
     private segWidth(seg: Node, w: number) {
-        seg.getChildByName('name')!.setPosition(-w / 2, 0, 0);
-        seg.getChildByName('val')!.setPosition(w / 2, 0, 0);
+        void w;
+        // 名稱靠右、數值靠左，緊貼在區段中央成一組，不會被看成下一個獎項的數值
+        const nm = seg.getChildByName('name')!, val = seg.getChildByName('val')!;
+        nm.getComponent(UITransform)!.setAnchorPoint(1, 0.5);
+        nm.getComponent(Label)!.horizontalAlign = Label.HorizontalAlign.RIGHT;
+        val.getComponent(UITransform)!.setAnchorPoint(0, 0.5);
+        val.getComponent(Label)!.horizontalAlign = Label.HorizontalAlign.LEFT;
+        nm.setPosition(-38, 0, 0);
+        val.setPosition(-26, 0, 0);
     }
 
     private layoutBottom(w: number) {
@@ -322,6 +341,7 @@ export class Hud {
         this.tips = mode === 'base' ? HEADER_TIPS_BASE : mode === 'free' ? HEADER_TIPS_FREE : HEADER_TIPS_AWAKEN;
         this.tipIdx = 0;
         this.nodes.multRing.active = mode !== 'base';
+        this.multRing.spriteFrame = Assets.sf(mode === 'awaken' ? 'ui_mult_ring_sun' : 'ui_mult_ring') || Assets.sf('ui_mult_ring');
         this.nodes.fgCounter.active = mode !== 'base';
         this.nodes.buyBtn.active = BUY_ENABLED && mode === 'base';
         if (!this.headerBusy) this.showTip();
@@ -354,9 +374,7 @@ export class Hud {
         const l = this.headerNum;
         l.node.active = true;
         l.string = text;
-        Tween.stopAllByTarget(l.node);
-        l.node.setScale(1.25, 1.25, 1);
-        tween(l.node).to(0.2, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
+        pop(l.node, 1.25, 0.2);
     }
 
     headerIdle() {
@@ -364,22 +382,14 @@ export class Hud {
         this.showTip();
     }
 
-    setMult(v: number, pop = true) {
+    setMult(v: number, animate = true) {
         this.multL.string = `${v}x`;
-        if (pop) {
-            const n = this.multL.node;
-            Tween.stopAllByTarget(n);
-            n.setScale(1.6, 1.6, 1);
-            tween(n).to(0.3, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
-        }
+        if (animate) pop(this.multL.node, 1.6, 0.3);
     }
 
     setFgCount(v: number) {
         this.fgNum.string = String(v);
-        const n = this.fgNum.node;
-        Tween.stopAllByTarget(n);
-        n.setScale(1.3, 1.3, 1);
-        tween(n).to(0.25, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
+        pop(this.fgNum.node, 1.3, 0.25);
     }
 
     /** 旋轉中：SPIN 箭頭轉動、光環變亮 */

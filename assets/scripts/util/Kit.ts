@@ -1,6 +1,6 @@
 import {
     Node, UITransform, Sprite, SpriteFrame, Label, Color, Vec3, Vec2, tween, Tween, UIOpacity,
-    BitmapFont, gfx, UIRenderer, Font,
+    BitmapFont, gfx, UIRenderer, Font, director,
 } from 'cc';
 import { Assets } from '../view/Assets';
 
@@ -116,8 +116,28 @@ export class Kit {
         return n.getComponent(UIOpacity) || n.addComponent(UIOpacity);
     }
 
+    /**
+     * 等待（遊戲時間，會套用倍速）。用 Cocos tween 計時而不是 setTimeout：
+     * 分頁切到背景時遊戲迴圈暫停，等待也一起暫停，演出不會錯拍（QA P2-15）
+     */
     static wait(sec: number): Promise<void> {
-        return new Promise((r) => setTimeout(r, (sec * 1000) / Kit.speed));
+        return Kit.delay(sec / Kit.speed);
+    }
+
+    /** 等待（遊戲時間，不套倍速） */
+    static delay(sec: number): Promise<void> {
+        return new Promise((r) => { tween({ t: 0 }).delay(Math.max(0, sec)).call(() => r()).start(); });
+    }
+
+    /** 遊戲時間（毫秒，背景分頁時不前進） */
+    static now(): number { return director.getTotalTime(); }
+
+    /** 每隔 sec 秒（遊戲時間）呼叫一次，回傳停止函式 */
+    static every(sec: number, fn: () => void): () => void {
+        let alive = true;
+        const loop = () => { if (!alive) return; fn(); Kit.delay(sec).then(loop); };
+        Kit.delay(sec).then(loop);
+        return () => { alive = false; };
     }
 
     /** tween → Promise（時間會套用倍速） */

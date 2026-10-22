@@ -1,4 +1,5 @@
 import { LayoutMap, ElemLayout, Anchor, TIMING } from '../layout/Layouts';
+import { Kit } from '../util/Kit';
 
 /**
  * DEV 開發者微調工具（HTML 疊層，只在瀏覽器執行）
@@ -23,7 +24,7 @@ export interface DevHost {
 }
 
 // 版面預設值大改時遞增版本，讓瀏覽器裡的舊微調值失效
-export const DEV_STORE_KEY = 'seth2_layout_v3';
+export const DEV_STORE_KEY = 'seth2_layout_v4';
 
 const TRIGGERS: [string, string][] = [
     ['big', 'BIG WIN'], ['super', 'SUPER WIN'], ['mega', 'MEGA WIN'], ['legendary', 'LEGENDARY'],
@@ -41,6 +42,14 @@ export class DevTool {
     private fields: Record<string, HTMLInputElement | HTMLSelectElement> = {};
     private drag: { key: string; x: number; y: number } | null = null;
     private highlight!: HTMLDivElement;
+    private side: 'left' | 'right' = 'right';
+    private mini = false;
+
+    /** 面板左右位置與收合狀態 */
+    private applySide() {
+        this.root.className = (this.side === 'left' ? 'left' : '') + (this.mini ? ' mini' : '');
+        this.gear.className = this.open ? 'open' + (this.side === 'left' ? ' left' : '') : '';
+    }
 
     constructor(host: DevHost) {
         this.host = host;
@@ -64,9 +73,13 @@ export class DevTool {
 #devGear{position:fixed;right:8px;bottom:8px;width:34px;height:34px;border-radius:17px;background:#1b1030cc;color:#f2c75c;
  font:20px/34px sans-serif;text-align:center;cursor:pointer;z-index:100000;opacity:.45;user-select:none;border:1px solid #f2c75c66}
 #devGear.open{right:350px;opacity:1}
+#devGear.open.left{right:auto;left:350px}
+#devPanel.left{right:auto;left:0;border-left:none;border-right:2px solid #f2c75c}
+#devPanel.mini{bottom:auto;height:auto;max-height:46px;overflow:hidden}
+#devPanel .tools{display:flex;gap:4px;margin:2px 0 6px}
 #devPanel .close{position:sticky;top:0;float:right;font-size:18px;padding:2px 10px;background:#7a2fb0}
 #devGear:hover{opacity:1}
-#devPanel{position:fixed;right:0;top:0;bottom:0;width:340px;overflow:auto;background:#120a1fee;color:#eee;z-index:99999;
+#devPanel{position:fixed;right:0;top:0;bottom:0;width:340px;overflow:auto;background:#120a1fc8;color:#eee;z-index:99999;
  font:12px/1.4 -apple-system,"PingFang TC",sans-serif;padding:10px 12px;box-sizing:border-box;display:none;border-left:2px solid #f2c75c}
 #devPanel h3{margin:4px 0 8px;color:#f2c75c;font-size:15px}
 #devPanel h4{margin:12px 0 6px;color:#c9a6ff;font-size:12px;border-bottom:1px solid #ffffff22;padding-bottom:3px}
@@ -108,8 +121,10 @@ export class DevTool {
     toggle() {
         this.open = !this.open;
         this.root.style.display = this.open ? 'block' : 'none';
-        this.gear.className = this.open ? 'open' : '';
+        this.applySide();
         this.gear.textContent = this.open ? '✕' : '⚙';
+        // 開啟時鎖住遊戲按鈕，拖曳元件不會誤觸旋轉、押注
+        Kit.inputLocked = this.open;
         if (this.open) this.gear.style.display = '';
         if (!this.open && document.activeElement instanceof HTMLElement) document.activeElement.blur();
         this.highlight.style.display = 'none';
@@ -125,6 +140,18 @@ export class DevTool {
         close.className = 'close';
         close.title = '關閉 DEV（也可按 Esc 或 D）';
         p.appendChild(close);
+        const tools = this.div('tools');
+        tools.appendChild(this.btn(this.side === 'left' ? '⇢ 移到右邊' : '⇠ 移到左邊', () => {
+            this.side = this.side === 'left' ? 'right' : 'left';
+            this.applySide();
+            this.render();
+        }));
+        tools.appendChild(this.btn(this.mini ? '▾ 展開' : '▴ 收合', () => {
+            this.mini = !this.mini;
+            this.applySide();
+            this.render();
+        }));
+        p.appendChild(tools);
         const h = document.createElement('h3');
         h.textContent = `🛠 DEV 版面微調（目前：${this.host.layoutKey() === 'pc' ? 'PC 橫式' : 'MOBILE 直式'}）`;
         p.appendChild(h);
@@ -154,7 +181,7 @@ export class DevTool {
         const e = this.cur()[this.sel];
         if (e) {
             const anc = document.createElement('select');
-            (['C', 'L', 'R', 'T', 'B', 'TL', 'TR', 'BL', 'BR'] as Anchor[]).forEach((a) => {
+            (['C', 'L', 'R', 'T', 'B', 'TL', 'TR', 'BL', 'BR', 'P'] as Anchor[]).forEach((a) => {
                 const o = document.createElement('option');
                 o.value = a; o.textContent = '錨點 ' + a;
                 if (a === e.a) o.selected = true;

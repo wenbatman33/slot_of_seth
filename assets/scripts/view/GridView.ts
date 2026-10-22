@@ -19,6 +19,7 @@ export class SymbolView {
     private art: Sprite;
     private glow: Sprite;
     private text: Label | null = null;
+    private flash: Sprite | null = null;
     private sun = false;
 
     constructor(parent: Node) {
@@ -32,6 +33,7 @@ export class SymbolView {
         this.cell = cell;
         this.sun = sun;
         this.art.color = Kit.color('#ffffff');
+        if (this.flash) this.flash.node.active = false;
         Kit.stop(this.node);
         this.node.setScale(1, 1, 1);
         this.node.angle = 0;
@@ -99,6 +101,22 @@ export class SymbolView {
         Tween.stopAllByTarget(n);
         n.setScale(2.2, 2.2, 1);
         tween(n).to(0.3, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
+    }
+
+    /** 整顆符號變白發亮：用同一張圖做加色疊加層，淡入 */
+    flashWhite(dur: number) {
+        if (!this.flash) {
+            this.flash = Kit.sprite(this.art.node, null, 'flash');
+            Kit.additive(this.flash);
+        }
+        const f = this.flash;
+        f.spriteFrame = this.art.spriteFrame;
+        f.node.getComponent(UITransform)!.setContentSize(this.art.node.getComponent(UITransform)!.contentSize);
+        f.node.active = true;
+        const op = Kit.opacity(f.node);
+        Tween.stopAllByTarget(op);
+        op.opacity = 0;
+        tween(op).to(dur / Kit.speed, { opacity: 255 }).start();
     }
 
     /** 中獎跳動 */
@@ -298,8 +316,16 @@ export class GridView {
     async tumble(step: TumbleStep) {
         const dead = new Set<string>();
         for (const w of step.wins) for (const [c, r] of w.cells) dead.add(c + ',' + r);
-        // 爆炸
+        // 先整顆變白發亮 0.12 秒，再爆開（依原作）
         const fx = FxLayer.inst;
+        dead.forEach((k) => {
+            const [c, r] = k.split(',').map(Number);
+            this.views[c][r]?.flashWhite(0.12);
+            // 白光蓋在符號上（粒子層，加色混合）
+            const p = GridView.pos(c, r);
+            fx?.spawn('soft', p.x, p.y, { s0: 0.55, s1: 0.75, a0: 255, a1: 120, life: 0.12 / Kit.speed + 0.05, add: true, size: 240, tint: '#ffffff', fadeIn: true }, this.fx);
+        });
+        await Kit.wait(0.12);
         dead.forEach((k) => {
             const [c, r] = k.split(',').map(Number);
             const v = this.views[c][r];

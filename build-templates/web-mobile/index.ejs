@@ -80,12 +80,16 @@
     .sl-pct { position: relative; margin-top: 1.6vmin; font-size: min(3.4vmin, 22px); color: #ffe7a0;
       text-shadow: 0 2px 0 #2a0a00; font-weight: 700; letter-spacing: .1em; }
     .sl-tip { position: relative; margin-top: 1vmin; font-size: min(3vmin, 18px); color: #d8c6ff; opacity: .85; min-height: 1.4em; }
+    /* 建置版本（QA P2-16）：角落小字，方便確認測的是哪一版 */
+    #seth2Ver { position: fixed; left: 6px; bottom: 2px; z-index: 9998; font: 10px/1.2 monospace; color: rgba(255,255,255,.35);
+      pointer-events: none; user-select: none; }
     @keyframes sl-spin { to { transform: rotate(360deg); } }
     @keyframes sl-pulse { 0%,100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
     @keyframes sl-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
   </style>
 </head>
 <body>
+  <div id="seth2Ver">v__SETH2_BUILD__</div>
   <div id="seth2Loading">
     <div class="sl-emblem"><div class="rays"></div><div class="glow"></div><img src="loading/scarab.png" alt=""></div>
     <div class="sl-title">戰神賽特 II</div>

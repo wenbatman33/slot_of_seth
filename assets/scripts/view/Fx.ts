@@ -120,14 +120,16 @@ export class FxLayer extends Component {
     // ------------------------------------------------------------ 組合特效
 
     /** 消除爆炸：金色沙塵 + 星點 */
-    burst(x: number, y: number, parent?: Node, tint = '#ffe9b0') {
-        this.spawn('fx_burst', x, y, { s0: 0.5, s1: 1.5, a0: 255, a1: 0, life: 0.5, add: true, size: 220, rot: Kit.rand(0, 360), tint }, parent);
-        for (let i = 0; i < 10; i++) {
-            const a = Math.random() * Math.PI * 2, v = Kit.rand(120, 420);
-            this.spawn('star', x, y, {
-                vx: Math.cos(a) * v, vy: Math.sin(a) * v, drag: 2.5, ay: -150,
-                s0: Kit.rand(0.25, 0.5), s1: 0, a0: 255, a1: 0, life: Kit.rand(0.4, 0.8), add: true, size: 64,
-                vr: Kit.rand(-360, 360), tint: '#fff2c8',
+    /** 消除爆炸：白色亮光閃一下 → 金色亮粒往外噴（原作的亮金色，不是褐色煙塵，QA P2-5） */
+    burst(x: number, y: number, parent?: Node, tint = '#fff6e0') {
+        this.spawn('soft', x, y, { s0: 0.35, s1: 1.1, a0: 255, a1: 0, life: 0.28, add: true, size: 260, tint: '#ffffff' }, parent);
+        this.spawn('fx_burst', x, y, { s0: 0.6, s1: 1.4, a0: 230, a1: 0, life: 0.38, add: true, size: 220, rot: Kit.rand(0, 360), tint }, parent);
+        for (let i = 0; i < 14; i++) {
+            const a = Math.random() * Math.PI * 2, v = Kit.rand(180, 520);
+            this.spawn(i % 3 ? 'dot' : 'star', x, y, {
+                vx: Math.cos(a) * v, vy: Math.sin(a) * v, drag: 3, ay: -220,
+                s0: Kit.rand(0.3, 0.6), s1: 0, a0: 255, a1: 0, life: Kit.rand(0.35, 0.65), add: true, size: i % 3 ? 40 : 64,
+                vr: Kit.rand(-360, 360), tint: i % 2 ? '#ffe27a' : '#fffbe8',
             }, parent);
         }
     }

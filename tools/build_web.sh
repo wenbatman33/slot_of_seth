@@ -22,4 +22,8 @@ for (const f of fs.readdirSync(dir).filter((x) => /^settings.*\.json$/.test(x)))
   console.log('已關閉 Cocos 啟動畫面：' + f);
 }
 JS
-echo "建置完成：$ROOT/build/web-mobile"
+# 角落版本號：日期時間 + git 短雜湊（有未提交修改時加 *）
+VER="$(date +%m%d-%H%M) $(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null)"
+[ -n "$(git -C "$ROOT" status --porcelain 2>/dev/null)" ] && VER="$VER*"
+sed -i '' "s|__SETH2_BUILD__|$VER|" "$ROOT/build/web-mobile/index.html"
+echo "建置完成（$VER）：$ROOT/build/web-mobile"

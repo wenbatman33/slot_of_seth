@@ -68,7 +68,7 @@ export class Celebrations {
         num.node.setPosition(0, -215, 0);
 
         const { w, h } = this.size();
-        const coinTimer = setInterval(() => FxLayer.inst?.coinRain(w, h, 4, coins), 160);
+        const stopCoins = Kit.every(0.16, () => FxLayer.inst?.coinRain(w, h, 4, coins));
         let tier = 0;
         const popTitle = (i: number) => {
             title.spriteFrame = Assets.sf(TIER_TITLE[i]);
@@ -90,11 +90,11 @@ export class Celebrations {
         const SEG = 1.7, PAUSE = 0.3;
         let coinTick = 0;
         await new Promise<void>((res) => {
-            let seg = 0, segT0 = Date.now(), pausedUntil = 0;
+            let seg = 0, segT0 = Kit.now(), pausedUntil = 0;
             const step = () => {
-                const now = Date.now();
+                const now = Kit.now();
                 if (this.skip) { num.string = Kit.fmt(amount); onCount && onCount(amount); res(); return; }
-                if (now < pausedUntil) { setTimeout(step, 33); return; }
+                if (now < pausedUntil) { Kit.delay(0.033).then(step); return; }
                 const k = Math.min(1, ((now - segT0) / 1000) * Kit.speed / SEG);
                 const v = marks[seg] + (marks[seg + 1] - marks[seg]) * (1 - Math.pow(1 - k, 1.4));
                 num.string = Kit.fmt(v);
@@ -108,7 +108,7 @@ export class Celebrations {
                     pausedUntil = now + (PAUSE * 1000) / Kit.speed;
                     segT0 = pausedUntil;
                 }
-                setTimeout(step, 33);
+                Kit.delay(0.033).then(step);
             };
             step();
         });
@@ -119,7 +119,7 @@ export class Celebrations {
         tween(num.node).to(0.3, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
         this.skip = false;
         await this.holdOrTap(2.2);
-        clearInterval(coinTimer);
+        stopCoins();
         await Promise.all([Kit.fade(box, 0, 0.3), Kit.fade(coins, 0, 0.3)]);
         box.destroy();
         coins.destroy();
@@ -172,8 +172,8 @@ export class Celebrations {
     }
 
     private async holdOrTap(sec: number) {
-        const t0 = Date.now();
-        while (!this.skip && Date.now() - t0 < sec * 1000) await new Promise((r) => setTimeout(r, 50));
+        const t0 = Kit.now();
+        while (!this.skip && Kit.now() - t0 < sec * 1000) await Kit.delay(0.05);
         this.skip = false;
     }
 
@@ -214,6 +214,12 @@ export class Celebrations {
         this.skip = false;
         const d = this.dim(150);
         const box = Kit.mk('fgIntro', this.root);
+        // 原作開場背後是一道紫紅色橫向光帶
+        const band = Kit.sprite(box, Assets.sf('radial'), 'band', 1900, 520);
+        band.color = Kit.color('#c43cff');
+        Kit.additive(band);
+        Kit.opacity(band.node).opacity = 200;
+        band.node.setPosition(0, 40, 0);
         const rays = Kit.sprite(box, Assets.sf('rays'), 'rays', 1000, 1000);
         Kit.additive(rays);
         rays.color = Kit.color('#ffcf7a');
@@ -259,14 +265,14 @@ export class Celebrations {
         box.setScale(0.4, 0.4, 1);
         tween(box).to(0.4, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
         Sfx.play('tier');
-        const t0 = Date.now();
+        const t0 = Kit.now();
         const dur = 1.8;
         await new Promise<void>((res) => {
             const step = () => {
-                const k = this.skip ? 1 : Math.min(1, (Date.now() - t0) / 1000 / dur);
+                const k = this.skip ? 1 : Math.min(1, (Kit.now() - t0) / 1000 / dur);
                 num.string = Kit.fmt(total * k);
                 if (k >= 1) { res(); return; }
-                setTimeout(step, 33);
+                Kit.delay(0.033).then(step);
             };
             step();
         });
@@ -284,6 +290,13 @@ export class Celebrations {
         Sfx.play('thunder');
         const d = this.dim(225, false);
         const box = Kit.mk('awaken', this.root);
+        // 全畫面藍色雷光（原作 427~430 秒整個畫面染成藍色）
+        const wash = Kit.rect(box, w * 1.4, h * 1.4, '#1f5cff', 'wash');
+        Kit.additive(wash);
+        const washOp = Kit.opacity(wash.node);
+        washOp.opacity = 0;
+        tween(washOp).to(0.4, { opacity: 70 }).start();
+        const stopWash = Kit.every(0.12, () => { washOp.opacity = 50 + Math.random() * 50; });
         // 隨機閃電畫在角色與標題後面，不要劈過「覺醒之力」字樣
         const boltLayer = Kit.mk('bolts', box);
         const data = Assets.spines['seth_awaken'];
@@ -305,14 +318,14 @@ export class Celebrations {
         holder.setPosition(0, -h / 2 - 200, 0);
         tween(holder).to(0.45, { position: new Vec3(0, -h / 2 + 10, 0), scale: new Vec3(base, base, 1) }, { easing: 'backOut' }).start();
         // 閃電
-        const bolts = setInterval(() => {
+        const stopBolts = Kit.every(0.14, () => {
             const b = Kit.sprite(boltLayer, Assets.sf('fx_lightning'), 'bolt', Kit.rand(500, 900), Kit.rand(500, 900));
             Kit.additive(b);
             b.node.setPosition(Kit.rand(-w / 2, w / 2), Kit.rand(-h / 3, h / 2), 0);
             b.node.angle = Kit.rand(0, 360);
             const op = Kit.opacity(b.node);
             tween(op).to(0.05, { opacity: 255 }).to(0.18, { opacity: 0 }).call(() => b.node.destroy()).start();
-        }, 140);
+        });
         await Kit.wait(0.6);
         // 白閃 + 震動
         const flash = Kit.rect(box, w * 1.3, h * 1.3, '#d8f4ff', 'flash');
@@ -328,7 +341,8 @@ export class Celebrations {
         tween(t.node).to(0.35, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
         tween(Kit.opacity(t.node)).to(0.2, { opacity: 255 }).start();
         await this.holdOrTap(2.4);
-        clearInterval(bolts);
+        stopBolts();
+        stopWash();
         await Promise.all([Kit.fade(box, 0, 0.35)]);
         box.destroy();
         await this.undim(d);
@@ -337,13 +351,13 @@ export class Celebrations {
     /** 畫面震動 */
     shake(n: Node, dur: number, amp: number) {
         const p0 = n.position.clone();
-        const t0 = Date.now();
-        const it = setInterval(() => {
-            const k = (Date.now() - t0) / 1000 / dur;
-            if (k >= 1) { clearInterval(it); n.setPosition(p0); return; }
+        const t0 = Kit.now();
+        const stop = Kit.every(0.03, () => {
+            const k = (Kit.now() - t0) / 1000 / dur;
+            if (k >= 1) { stop(); n.setPosition(p0); return; }
             const a = amp * (1 - k);
             n.setPosition(p0.x + Kit.rand(-a, a), p0.y + Kit.rand(-a, a), 0);
-        }, 30);
+        });
     }
 
     // ------------------------------------------------------------ Jackpot
@@ -364,10 +378,10 @@ export class Celebrations {
         box.setScale(0.3, 0.3, 1);
         tween(box).to(0.5, { scale: new Vec3(1, 1, 1) }, { easing: 'elasticOut' }).start();
         const { w, h } = this.size();
-        const coinTimer = setInterval(() => FxLayer.inst?.coinRain(w, h, 8, coins), 150);
+        const stopCoins = Kit.every(0.15, () => FxLayer.inst?.coinRain(w, h, 8, coins));
         Sfx.play('bigwin');
         await this.holdOrTap(4);
-        clearInterval(coinTimer);
+        stopCoins();
         await Promise.all([Kit.fade(box, 0, 0.3), Kit.fade(coins, 0, 0.3)]);
         box.destroy();
         coins.destroy();

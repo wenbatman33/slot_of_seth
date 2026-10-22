@@ -40,10 +40,9 @@ export class CharacterView {
         this.busy = true;
         sk.setAnimation(0, 'cast', false);
         sk.addAnimation(0, 'idle', true, 0);
-        setTimeout(() => (this.busy = false), 1500 / Math.max(1, sk.timeScale));
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(this.flameWorld()), (this.throwAt * 1000) / Math.max(0.1, sk.timeScale));
-        });
+        // 用遊戲時間計時，和骨骼動畫同步（背景分頁時一起暫停）
+        Kit.delay(1.5 / Math.max(1, sk.timeScale)).then(() => (this.busy = false));
+        return Kit.delay(this.throwAt / Math.max(0.1, sk.timeScale)).then(() => this.flameWorld());
     }
 
     get isBusy() { return this.busy; }

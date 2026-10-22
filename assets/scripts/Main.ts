@@ -15,7 +15,7 @@ import {
     LAYOUT_PC, LAYOUT_MOBILE, LayoutMap, ElemLayout, DESIGN_PC, DESIGN_MOBILE, TIMING,
 } from './layout/Layouts';
 import {
-    SlotEngine, SpinResult, Mode, BUY_COST_X, PAYTABLE, winTier, round2, COLS, ROWS, JACKPOTS, SCATTER_PAY, MAX_WIN_X,
+    SlotEngine, SpinResult, Mode, BUY_COST_X, PAYTABLE, winTier, round2, JACKPOTS, SCATTER_PAY, MAX_WIN_X,
 } from './core/SlotEngine';
 
 const { ccclass } = _decorator;
@@ -164,6 +164,7 @@ export class Main extends Component implements DevHost {
             window.addEventListener('pointerdown', unlock, { once: true });
             this.dev = new DevTool(this);
             (window as any).__seth2 = this; // 方便除錯
+            (window as any).__kit = Kit;    // 除錯：可改 __kit.speed 慢動作檢查演出
         }
         // 環境火星
         this.schedule(() => this.spawnAmbient(), 0.12);
@@ -183,6 +184,7 @@ export class Main extends Component implements DevHost {
     }
 
     private anchorPos(e: ElemLayout): Vec3 {
+        if (e.a === 'P') return new Vec3(e.x, e.y, 0);  // 子元件：相對父元件
         const W = this.vis.w / 2, H = this.vis.h / 2;
         let x = 0, y = 0;
         if (e.a.indexOf('L') >= 0) x = -W;
@@ -226,9 +228,10 @@ export class Main extends Component implements DevHost {
             n.setPosition(this.anchorPos({ ...e, x: e.x * k, y: e.y * k }));
             const s = e.s * k;
             n.setScale(s, s, 1);
+            (n as any).__ls = s;  // 數字彈跳動畫結束時回到這個縮放
             n.angle = e.r || 0;
             Kit.opacity(n).opacity = e.o ?? 255;
-            if (key === 'multRing' || key === 'fgCounter' || key === 'buyBtn') {
+            if (key === 'multRing' || key === 'fgCounter' || key === 'buyBtn' || key === 'headerMsg' || key === 'headerNum') {
                 // 依遊戲狀態控制顯示，版面只控制「是否允許顯示」
                 if (e.v === false) n.active = false;
             } else {
@@ -440,14 +443,14 @@ export class Main extends Component implements DevHost {
         this.busy = true;
         this.hud.setWin(0);
         this.refreshHud();
-        const res = this.engine.spin('base', this.bet, 0, buy || this.consumeForceScatter());
+        const res = this.engine.spin('base', this.bet, 0, buy || this.consumeForceScatter(), { forceOrb: this.consumeForceOrb() });
         if (!buy) { JACKPOTS.forEach((j, i) => (this.jpPool[i] += j.grow)); this.refreshHud(); }
         const win = await this.runSpin(res);
         if (res.jackpot >= 0) await this.payJackpot(res.jackpot);
         if (res.freeSpinsAwarded) {
             this.balance = round2(this.balance + win);
             this.refreshHud();
-            await this.runFreeGames(res.freeSpinsAwarded);
+            await this.runFreeGames(res.freeSpinsAwarded, win, res.scatterPay);
         } else {
             if (winTier(win, this.bet) >= 0) await this.cele.bigWin(win, this.bet, (v) => this.hud.setWin(v));
             this.balance = round2(this.balance + win);
@@ -459,6 +462,12 @@ export class Main extends Component implements DevHost {
             await Kit.wait(0.35);
             if (this.auto && this.mode === 'base') this.playBaseSpin(false);
         }
+    }
+
+    private consumeForceOrb(): number {
+        if (!this.forceOrb) return 0;
+        this.forceOrb = false;
+        return 10;
     }
 
     private consumeForceScatter(): boolean {
@@ -473,7 +482,6 @@ export class Main extends Component implements DevHost {
     private async runSpin(res: SpinResult): Promise<number> {
         this.hud.setSpinning(true);
         Sfx.play('drop');
-        if (this.forceOrb) { this.forceOrb = false; this.injectOrb(res); }
         // 1) 落下（SCATTER 已有 3 個時，後面幾軸放慢製造期待感）
         const scCols: number[] = [];
         let sc = 0;
@@ -516,12 +524,6 @@ export class Main extends Component implements DevHost {
             if (winTier(win, this.bet) < 0 && Math.random() < 0.5) (this.nextCaster++ % 2 ? this.charR : this.charL).win();
         }
         return win;
-    }
-
-    /** DEV：強制在盤面放一顆倍數球 */
-    private injectOrb(res: SpinResult) {
-        const c = Math.floor(Math.random() * COLS), r = Math.floor(Math.random() * ROWS);
-        res.initial[c][r] = { id: 'orb', mult: 10, uid: 900000 + Math.floor(Math.random() * 99999) };
     }
 
     /** 新出現的倍數球先藏起數字，等角色施法打中才揭曉 */
@@ -631,12 +633,27 @@ export class Main extends Component implements DevHost {
     }
 
     // ================================================================ 免費遊戲
-    private async runFreeGames(count: number) {
+    private async runFreeGames(count: number, triggerWin = 0, scatterPay = 0) {
+        // 觸發順序依原作（QA P2-8）：SCATTER 晃動、標題列累加 SCATTER 贏分 → 「15 免費遊戲」→ 火焰龍捲轉場 → 開始
         for (const s of this.grid.find('scatter')) s.v.wiggle(4);
         Sfx.play('scatter');
-        await Kit.wait(0.8);
         this.charL.win();
         this.charR.win();
+        if (scatterPay > 0) {
+            const from = round2(triggerWin - scatterPay);
+            const steps = 18;
+            for (let i = 1; i <= steps; i++) {
+                const v = round2(from + (scatterPay * i) / steps);
+                this.hud.headerWin(Kit.fmt(v));
+                this.hud.setWin(v);
+                if (i % 3 === 0) Sfx.play('coin');
+                await Kit.wait(0.07);
+            }
+            await Kit.wait(0.4);
+        } else {
+            await Kit.wait(0.8);
+        }
+        await this.cele.freeGamesIntro(count);
         await this.cele.wave('fire', () => {
             this.setMode('free');
             this.totalMult = 0;
@@ -644,17 +661,18 @@ export class Main extends Component implements DevHost {
             this.hud.setMult(0, false);
             this.hud.setFgCount(count);
         });
-        await this.cele.freeGamesIntro(count);
+        // 5000 倍上限包含觸發那一轉的贏分（QA P2-13）
+        const cap = Math.max(0, this.bet * MAX_WIN_X - triggerWin);
         this.fgLeft = count;
         while (this.fgLeft > 0) {
             this.fgLeft--;
             this.hud.setFgCount(this.fgLeft);
             this.busy = true;
-            const res = this.engine.spin(this.mode, this.bet, this.totalMult, false);
+            const res = this.engine.spin(this.mode, this.bet, this.totalMult, false, { forceOrb: this.consumeForceOrb() });
             if (this.consumeForceScatter()) this.forceThreeScatters(res);
             const win = await this.runSpin(res);
             this.totalMult = res.totalMult;
-            this.fgTotal = round2(Math.min(this.fgTotal + win, this.bet * 5000));
+            this.fgTotal = round2(Math.min(this.fgTotal + win, cap));
             this.hud.setWin(this.fgTotal);
             if (res.awakenTriggered) {
                 for (const s of this.grid.find('scatter')) s.v.wiggle(4);
@@ -664,16 +682,18 @@ export class Main extends Component implements DevHost {
             } else if (res.freeSpinsAwarded) {
                 await this.extraSpins(res.freeSpinsAwarded);
             }
+            if (this.fgTotal >= cap) { this.fgLeft = 0; this.toast(`達到最高贏分 ${MAX_WIN_X} 倍`); }
             await Kit.wait(0.45);
         }
         await Kit.wait(0.4);
         await this.cele.freeGamesOutro(this.fgTotal);
-        if (winTier(this.fgTotal, this.bet) >= 0) await this.cele.bigWin(this.fgTotal, this.bet);
+        const featureWin = round2(triggerWin + this.fgTotal);
+        if (winTier(featureWin, this.bet) >= 0) await this.cele.bigWin(featureWin, this.bet);
         this.balance = round2(this.balance + this.fgTotal);
         this.refreshHud();
         await this.cele.wave('purple', () => {
             this.setMode('base');
-            this.hud.setWin(this.fgTotal);
+            this.hud.setWin(featureWin);  // 底列贏分 = 觸發那一轉 + 免費遊戲（QA P2-13）
         });
     }
 

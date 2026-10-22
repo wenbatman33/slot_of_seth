@@ -337,6 +337,25 @@
       "size": "1024x1024",
       "key": "black",
       "prompt": "Visual effect texture: a glowing golden-white magical dust explosion burst, soft round puff of shimmering sparkles and sand particles radiating outward, centered. BACKGROUND: pure black #000000 (for additive blending), no other elements, no text."
+    },
+    {
+      "id": "seth_awaken2",
+      "size": "1536x1024",
+      "key": "green",
+      "ref": [
+        "art_src/ref/pose_awaken.png",
+        "art_src/keyed/char_seth2.png"
+      ],
+      "prompt": "FIRST attached image: a low-resolution game screenshot used ONLY as a POSE reference (copy only the pose, not the design). SECOND attached image: OUR Seth character design — keep exactly his face, his tall jackal-ear helmet crown, blue-and-gold striped nemes, broad gold collar, gold arm bands and bracers, same colors and rendering quality. Draw a cinematic close-up half-body (from the top of the helmet ears down to the waist) of OUR Seth in his AWAKENED moment, matching the pose of the first image: facing the viewer, BOTH ARMS RAISED up beside his head with elbows bent outward and upward, both HANDS OPEN with fingers spread and curled like claws gathering power at about the height of his helmet, head tilted slightly, mouth slightly open shouting, eyes glowing intense electric blue-white, muscles tense. Subtle blue rim light on the edges. No lightning, no aura effects (they will be added separately). CRITICAL FOR SKELETAL RIGGING: both raised arms and hands clearly separated from the head and helmet by visible background gaps. Figure centered, nothing cropped at the top or sides. BACKGROUND: perfectly flat solid pure green #00FF00 chroma key, no shadow, no gradient, no text."
+    },
+    {
+      "id": "ui_mult_ring_sun",
+      "size": "1024x1024",
+      "key": "green",
+      "ref": [
+        "art_src/keyed/ui_mult_ring.png"
+      ],
+      "prompt": "Slot game UI, the AWAKENED version of the attached multiplier ring holder: same size, same round shape and same polished gold Egyptian craftsmanship, but now a radiant SUN medallion — a ring of sharp golden sun rays and small spikes all around the rim, a small golden cobra uraeus at the top, and the inner circle is a glowing warm amber-orange to deep red lens with a soft inner fire glow (a multiplier number will be drawn on top in code, keep the center empty). Front view, filling about 88% of the canvas, centered. BACKGROUND outside the medallion: perfectly flat solid pure green #00FF00, no text, no numbers."
     }
   ]
 }
